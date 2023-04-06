@@ -10,7 +10,10 @@ I originally took this course in 2019 and was assigned to Red Team because of so
 ## Vulnerabilities
 This section highlights the vulnerabilities that I have found on the defense lab system. These CVEs may or may not be patched by updating the system, I will have to try 
 
-### CVE-2021-3156
+### CVE-2021-3156 (Baron Samedit)
 **Type:** local
-**Fixed by updating:** No
+**Fixed by updating:** ?
 
+### CVE 2021-4034 (PwnKit)
+**Type:** local
+**Fixed by updating:** ?
