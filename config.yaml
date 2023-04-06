@@ -1,0 +1,11 @@
+ips:
+  - 192.168.199.129
+credentials:
+  - username: trenton
+    password: trenton
+  - username: darlene
+    password: darlene
+  - username: leslie
+    password: leslie
+  - username: mobley
+    password: mobley
