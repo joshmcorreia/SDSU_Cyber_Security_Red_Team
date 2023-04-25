@@ -37,14 +37,20 @@ def check_login(ip_address, username, password):
 		logger.info(f"{COLOR_FAIL}Failed to connect to {username}@{ip_address}{COLOR_END}")
 		return False
 
-def check_all_logins(config):
+def check_all_logins(config, return_when_root=True):
+	"""
+	Tries to connect to all IPs with default credentials
+
+	return_when_root: If set to False, all logins will be checked regardless of whether or not we successfully got root
+	"""
 	ips = config["ips"]
 	credentials = config["credentials"]
 	for ip in ips:
 		for credential in credentials:
 			try:
 				got_root = check_login(ip_address=ip, username=credential["username"], password=credential["password"])
-				if got_root:
-					break
+				if return_when_root:
+					if got_root:
+						break
 			except Exception as err:
-				logger.exception(err)
+				pass
