@@ -4,6 +4,7 @@ import os
 import sys
 sys.path.append("..")
 from BetterLogger import BetterLogger
+from UserIP import UserIP
 
 filename = os.path.basename("main.py")
 logger = BetterLogger(logger_name=filename).logger
@@ -57,3 +58,11 @@ def check_all_logins(config, return_when_root=True):
 						break
 			except Exception as err:
 				pass
+
+def create_userip_objects(config):
+	ips = config["ips"]
+	users = []
+	for ip in ips:
+		new_user = UserIP(ip_address=ip)
+		users.append(new_user)
+	print(users)
