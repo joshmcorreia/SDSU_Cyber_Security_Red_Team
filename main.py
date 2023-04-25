@@ -9,6 +9,7 @@ filename = os.path.basename("main.py")
 logger = BetterLogger(logger_name=filename).logger
 
 COLOR_OKGREEN = '\033[92m'
+COLOR_OKBLUE = '\033[94m'
 COLOR_FAIL = '\033[91m'
 COLOR_END = '\033[0m'
 
@@ -48,9 +49,11 @@ def check_all_logins(config, return_when_root=True):
 	for ip in ips:
 		for credential in credentials:
 			try:
-				got_root = check_login(ip_address=ip, username=credential["username"], password=credential["password"])
-				if return_when_root:
-					if got_root:
+				logged_in = check_login(ip_address=ip, username=credential["username"], password=credential["password"])
+				is_sudo_user = credential['sudo_user']
+				if logged_in and (is_sudo_user == True):
+					logger.info(f"{COLOR_OKBLUE}Successfully got root on {ip}{COLOR_END}")
+					if return_when_root:
 						break
 			except Exception as err:
 				pass

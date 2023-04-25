@@ -3,13 +3,19 @@ ips:
 credentials:
   - username: elliot
     password: fsociety
+    sudo_user: True
   - username: mrrobot
     password: mrrobot
+    sudo_user: True
   - username: trenton
     password: trenton
+    sudo_user: False
   - username: darlene
     password: darlene
+    sudo_user: False
   - username: leslie
     password: leslie
+    sudo_user: False
   - username: mobley
     password: mobley
+    sudo_user: False
