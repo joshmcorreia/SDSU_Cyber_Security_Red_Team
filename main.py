@@ -1,13 +1,5 @@
-import paramiko
 import yaml
-import os
-import sys
-sys.path.append("..")
-from BetterLogger import BetterLogger
-from UserIP import UserIP
-
-filename = os.path.basename("main.py")
-logger = BetterLogger(logger_name=filename).logger
+from BetterLogger import logger
 
 COLOR_OKGREEN = '\033[92m'
 COLOR_OKBLUE = '\033[94m'
@@ -20,49 +12,3 @@ def read_config_file():
 		parsed_config = yaml.safe_load(file_in)
 	logger.debug("Successfully read config file")
 	return parsed_config
-
-def check_login(ip_address, username, password):
-	"""
-	Returns True if we successfully got root, and returns False otherwise
-	"""
-	try:
-		logger.info(f"Connecting to {username}@{ip_address}...")
-		ssh_client = paramiko.SSHClient()
-		ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-		ssh_client.connect(ip_address, username=username, password=password, timeout=5)
-		logger.info(f"{COLOR_OKGREEN}Successfully connected to {username}@{ip_address}{COLOR_END}")
-		return True
-	except paramiko.AuthenticationException as err:
-		logger.info(f"{COLOR_FAIL}Failed to connect to {username}@{ip_address}. The user most likely changed their password!{COLOR_END}")
-		return False
-	except Exception as err:
-		logger.info(f"{COLOR_FAIL}Failed to connect to {username}@{ip_address}{COLOR_END}")
-		return False
-
-def check_all_logins(config, return_when_root=True):
-	"""
-	Tries to connect to all IPs with default credentials
-
-	return_when_root: If set to False, all logins will be checked regardless of whether or not we successfully got root
-	"""
-	ips = config["ips"]
-	credentials = config["credentials"]
-	for ip in ips:
-		for credential in credentials:
-			try:
-				logged_in = check_login(ip_address=ip, username=credential["username"], password=credential["password"])
-				is_sudo_user = credential['sudo_user']
-				if logged_in and (is_sudo_user == True):
-					logger.info(f"{COLOR_OKBLUE}Successfully got root on {ip}{COLOR_END}")
-					if return_when_root:
-						break
-			except Exception as err:
-				pass
-
-def create_userip_objects(config):
-	ips = config["ips"]
-	users = []
-	for ip in ips:
-		new_user = UserIP(ip_address=ip)
-		users.append(new_user)
-	print(users)
