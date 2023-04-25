@@ -1,6 +1,10 @@
 ips:
   - 192.168.199.129
 credentials:
+  - username: elliot
+    password: fsociety
+  - username: mrrobot
+    password: mrrobot
   - username: trenton
     password: trenton
   - username: darlene
