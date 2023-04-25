@@ -29,8 +29,11 @@ def check_login(ip_address, username, password):
 		ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 		ssh_client.connect(ip_address, username=username, password=password, timeout=5)
 		logger.info(f"{COLOR_OKGREEN}Successfully connected to {username}@{ip_address}{COLOR_END}")
+		return True
+	except paramiko.AuthenticationException as err:
+		logger.info(f"{COLOR_FAIL}Failed to connect to {username}@{ip_address}. The user most likely changed their password!{COLOR_END}")
+		return False
 	except Exception as err:
-		logger.error(err)
 		logger.info(f"{COLOR_FAIL}Failed to connect to {username}@{ip_address}{COLOR_END}")
 		return False
 
