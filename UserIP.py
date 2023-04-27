@@ -1,4 +1,5 @@
 import paramiko
+import socket
 from BetterLogger import logger
 
 COLOR_OKGREEN = '\033[92m'
@@ -193,6 +194,41 @@ class UserIP:
 			logger.exception(err)
 			return False
 
+	def exploit_challenge_one_python(self):
+		"""
+		Returns True if we got root, otherwise returns False
+		"""
+		logger.info("====== ATTEMPTING EXPLOIT - CHALLENGE ONE - PYTHON =========")
+		try:
+			port = 2222
+			logger.info(f"Connecting to port {port}...")
+			socket_connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+			socket_connection.connect((self.ip_address, port))
+			logger.info(f"Successfully connected to port {port}.")
+		except ConnectionRefusedError as err:
+			logger.info(f"{COLOR_FAIL}The challenge one python service is not running!{COLOR_END}")
+			return False
+
+		exploit_command = "ls; echo '0x1x2x3'; whoami" # echo 0x1x2x3 so we can parse for where the actual command injection output begins
+		logger.info("Checking if the student patched the vulnerability...")
+		socket_connection.sendall(exploit_command.encode())
+		socket_connection.shutdown(socket.SHUT_WR)
+		socket_response = ""
+		while 1:
+			data = socket_connection.recv(1024)
+			if len(data) == 0:
+				break
+			socket_response = data.decode()
+		socket_connection.close()
+		logger.debug(socket_response)
+		if "0x1x2x3" in socket_response:
+			logged_in_user = socket_response.split("0x1x2x3")[1].strip() # split on `0x1x2x3` so we can parse for the command injection output
+			logger.debug(f"Logged in as `{logged_in_user}`")
+			if logged_in_user == "elliot":
+				logger.info(f"{COLOR_OKGREEN}The challenge one python service has not been patched!{COLOR_END}")
+				return True
+		logger.info(f"{COLOR_FAIL}The challenge one python service has been patched!{COLOR_END}")
+		return False
 
 	def check_all_logins(self):
 		"""
@@ -216,14 +252,8 @@ class UserIP:
 		got_root = False
 		if not got_root:
 			got_root = self.check_all_logins()
-			try:
-				got_root = self.__check_login(username=credential["username"], password=credential["password"], is_sudo_user=credential["sudo_user"])
-				if got_root:
-					logger.info(f"{COLOR_OKBLUE}Successfully got root on {self.ip_address}{COLOR_END}")
-					if return_when_root:
-						break
-			except Exception as err:
-				pass
+		if not got_root:
+			got_root = self.exploit_challenge_one_python()
 
 		if got_root:
 			logger.info(f"{COLOR_OKBLUE}Successfully got root on {self.ip_address}{COLOR_END}")
