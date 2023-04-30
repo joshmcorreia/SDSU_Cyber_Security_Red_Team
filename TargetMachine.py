@@ -9,9 +9,9 @@ COLOR_ORANGE = '\033[93m'
 COLOR_FAIL = '\033[91m'
 COLOR_END = '\033[0m'
 
-class UserIP:
+class TargetMachine:
 	"""
-	UserIP represents a single student's machine
+	TargetMachine represents a single student's machine
 
 	Each machine has multiple exploits that can be run on it
 	"""
