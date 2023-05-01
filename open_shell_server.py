@@ -1,11 +1,12 @@
 import argparse
 import socketserver
+import sys
 from subprocess import Popen, PIPE
 
 class Pipe(socketserver.StreamRequestHandler):
 	def handle(self):
 		while True:
-			self.wfile.write("$".encode())
+			self.wfile.write("$ ".encode())
 			shell_command = self.rfile.readline().strip()
 			print(f"Running the following command: `{shell_command.decode()}`")
 
@@ -32,9 +33,20 @@ class NServer(socketserver.ThreadingTCPServer):
 
 if __name__ == "__main__":
 	parser = argparse.ArgumentParser(description='Process some integers.')
-	parser.add_argument('-p', "--port", help="The port to open the server on.")
+	parser.add_argument('-p', "--port", help="The port to open the server on.", required=True)
 	args = parser.parse_args()
-	port = int(args.port)
-	wz = NServer(('', port), Pipe)
-	print(f"Opened reverse shell on port {port}")
-	wz.serve_forever()
+
+	try:
+		port = int(args.port)
+	except Exception:
+		print(f"Invalid port number: `{args.port}`")
+		sys.exit(1)
+
+	try:
+		print(f"Attempting to open a shell server on port {port}...")
+		wz = NServer(('', port), Pipe)
+		print(f"Successfully opened a shell server on port {port}.")
+		wz.serve_forever()
+	except Exception as err:
+		print(f"Failed to start a shell server! Reason: `{err}`")
+		sys.exit(1)
