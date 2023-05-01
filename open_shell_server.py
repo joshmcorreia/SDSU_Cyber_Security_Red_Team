@@ -1,7 +1,12 @@
 import argparse
+import os
+import pwd
 import socketserver
 import sys
 from subprocess import Popen, PIPE
+
+def get_username():
+	return pwd.getpwuid(os.getuid())[0]
 
 class Pipe(socketserver.StreamRequestHandler):
 	def handle(self):
@@ -34,6 +39,7 @@ class NServer(socketserver.ThreadingTCPServer):
 if __name__ == "__main__":
 	parser = argparse.ArgumentParser(description='Process some integers.')
 	parser.add_argument('-p', "--port", help="The port to open the server on.", required=True)
+	parser.add_argument('-a', "--any_user", help="Allows the server to start without root privileges.", action="store_true")
 	args = parser.parse_args()
 
 	try:
@@ -41,6 +47,12 @@ if __name__ == "__main__":
 	except Exception:
 		print(f"Invalid port number: `{args.port}`")
 		sys.exit(1)
+
+	if not args.any_user:
+		username = get_username()
+		if username != "root":
+			print(f"ERROR: Script started as `{username}` instead of `root`!")
+			sys.exit(1)
 
 	try:
 		print(f"Attempting to open a shell server on port {port}...")
