@@ -35,10 +35,9 @@ class ChallengeTwoShellPHP(Exploit):
 		"""
 		try:
 			logger.info("Testing if the target is vulnerable to ChallengeTwoShellPHP...")
-			# TODO: Currently I use baron samedit to test if it's vulnerable, maybe I can add an abstraction that tries all local CVEs so I don't need to write this over and over
 			command = "whoami"
-			server_output = self.run_command_as_root(command=command)
-			if "root" in server_output:
+			server_output = self.run_custom_command(command=command)
+			if "www-data" in server_output:
 				logger.info(f"{COLOR_OKGREEN}The target is vulnerable to ChallengeTwoShellPHP!{COLOR_END}")
 				return True
 			raise PatchedException()
