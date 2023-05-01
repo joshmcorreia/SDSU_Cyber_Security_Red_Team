@@ -24,8 +24,8 @@ class TargetMachine:
 		self.exploits = []
 		self.exploits.append(ExploitDefaultCredentials(self.ip_address))
 		self.exploits.append(ChallengeOnePython(self.ip_address))
-		self.exploits.append(ChallengeTwoShellPHP(self.ip_address))
 		self.exploits.append(ChallengeTwoUpload(self.ip_address))
+		self.exploits.append(ChallengeTwoShellPHP(self.ip_address))
 
 	def __repr__(self) -> str:
 		"""
