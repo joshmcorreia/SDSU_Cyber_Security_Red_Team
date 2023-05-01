@@ -11,6 +11,7 @@ COLOR_END = '\033[0m'
 
 class ChallengeTwoShellPHP(Exploit):
 	"""
+	WARNING: PHP is dumb and won't let you run a process in the background like you expect, so you need to pipe the output to a file https://stackoverflow.com/questions/14555971/php-exec-background-process-issues
 	WARNING: It's a bit tricky to tell if our commands were successful because `shell.php` does not return error codes or stderr, make sure to add 'echo $?' or something similar to the end of the command.
 	"""
 	def __init__(self, ip_address) -> None:
