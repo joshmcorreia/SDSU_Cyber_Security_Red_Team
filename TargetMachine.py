@@ -1,7 +1,7 @@
-from BetterLogger import logger
 from ExploitDefaultCredentials import ExploitDefaultCredentials
 from ChallengeOnePython import ChallengeOnePython
 from ChallengeTwoShellPHP import ChallengeTwoShellPHP
+from ChallengeTwoUpload import ChallengeTwoUpload
 
 COLOR_OKGREEN = '\033[92m'
 COLOR_OKBLUE = '\033[94m'
@@ -25,6 +25,7 @@ class TargetMachine:
 		self.exploits.append(ExploitDefaultCredentials(self.ip_address))
 		self.exploits.append(ChallengeOnePython(self.ip_address))
 		self.exploits.append(ChallengeTwoShellPHP(self.ip_address))
+		self.exploits.append(ChallengeTwoUpload(self.ip_address))
 
 	def __repr__(self) -> str:
 		"""
