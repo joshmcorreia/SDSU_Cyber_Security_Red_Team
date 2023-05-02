@@ -3,29 +3,42 @@ import requests
 import yaml
 from BetterLogger import logger
 
+COLOR_OKGREEN = '\033[92m'
+COLOR_OKBLUE = '\033[94m'
+COLOR_ORANGE = '\033[93m'
+COLOR_FAIL = '\033[91m'
+COLOR_END = '\033[0m'
+
 class HiveMind:
 	"""
 	HiveMind keeps track of all target machines and allows you to mass-control machines
 	"""
-
 	def __init__(self) -> None:
 		self.target_machines = {}
 
 	def read_config_file(self):
-		logger.debug("Reading config file...")
-		with open("config.yaml", 'r') as file_in:
+		config_file_location = "config.yaml"
+		logger.debug(f"Reading config file `{config_file_location}`...")
+		with open(config_file_location, 'r') as file_in:
 			parsed_config = yaml.safe_load(file_in)
-		logger.debug("Successfully read config file")
+		logger.debug(f"Successfully read config file `{config_file_location}`.")
 		return parsed_config
 
 	def add_new_target_machines_from_config(self):
+		logger.info(f"Updating list of target machines based on the local config file...")
 		parsed_config = self.read_config_file()
 		target_ips = parsed_config["ips"]
 		credentials = parsed_config["credentials"]
+		added_ips = []
 		for ip in target_ips:
 			if ip not in self.target_machines:
+				added_ips.append(ip)
 				new_user = TargetMachine(ip_address=ip, credentials=credentials)
 				self.target_machines[ip] = new_user
+		if len(added_ips) == 0:
+			logger.info("All IPs are already in the list of target machines.")
+		else:
+			logger.info(f"Successfully added the following IPs: {added_ips}.")
 
 	def add_new_target_machines_from_ip_list(self):
 		"""
