@@ -1,3 +1,5 @@
+import socket
+from BetterLogger import logger
 from ExploitDefaultCredentials import ExploitDefaultCredentials
 from ChallengeOnePython import ChallengeOnePython
 from BackdoorTwoShellPHP import BackdoorTwoShellPHP
@@ -17,10 +19,11 @@ class TargetMachine:
 
 	Each machine has multiple exploits that can be run on it
 	"""
-	def __init__(self, ip_address, credentials):
+	def __init__(self, ip_address, credentials, parsed_config):
 		self.ip_address = ip_address
 		self.got_root = False
 		self.credentials = credentials
+		self.parsed_config = parsed_config
 
 		self.exploits = []
 		self.exploits.append(ExploitDefaultCredentials(self.ip_address))
@@ -49,3 +52,21 @@ class TargetMachine:
 				num_vulnerabilities += 1
 		return num_vulnerabilities
 
+	def check_if_root_netcat_server_is_running(self):
+		"""
+		Returns True if the netcat server is already running and False if not
+		"""
+		try:
+			logger.info(f"{self.ip_address} - Checking if a root netcat server is already running on the target machine...")
+			port = self.parsed_config["root_netcat_server_port"]
+			logger.debug(f"{self.ip_address} - Connecting to port {port}...")
+			socket_connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+			socket_connection.settimeout(3)
+			socket_connection.connect((self.ip_address, port))
+			socket_connection.settimeout(None)
+			logger.debug(f"{self.ip_address} - Successfully connected to port {port}.")
+			logger.info(f"{COLOR_OKGREEN}{self.ip_address} - A root netcat server is running on the target machine!{COLOR_END}")
+			return True
+		except Exception:
+			logger.info(f"{COLOR_FAIL}{self.ip_address} - A root netcat server is not currently running on the target machine.{COLOR_END}")
+			return False

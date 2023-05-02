@@ -33,7 +33,7 @@ class HiveMind:
 		for ip in target_ips:
 			if ip not in self.target_machines:
 				added_ips.append(ip)
-				new_user = TargetMachine(ip_address=ip, credentials=credentials)
+				new_user = TargetMachine(ip_address=ip, credentials=credentials, parsed_config=self.parsed_config)
 				self.target_machines[ip] = new_user
 		if len(added_ips) == 0:
 			logger.info("All IPs are already in the list of target machines.")
@@ -60,7 +60,7 @@ class HiveMind:
 			added_ips = []
 			for ip in list_of_ips:
 				if ip not in self.target_machines:
-					new_user = TargetMachine(ip_address=ip, credentials=credentials)
+					new_user = TargetMachine(ip_address=ip, credentials=credentials, parsed_config=self.parsed_config)
 					self.target_machines[ip] = new_user
 					added_ips.append(ip)
 			if len(added_ips) == 0:
