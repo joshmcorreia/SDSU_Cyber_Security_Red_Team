@@ -26,12 +26,12 @@ class TargetMachine:
 		self.parsed_config = parsed_config
 
 		self.exploits = []
-		self.exploits.append(ExploitDefaultCredentials(self.ip_address))
-		self.exploits.append(BackdoorTwoShellPHP(self.ip_address))
-		self.exploits.append(ChallengeOnePython(self.ip_address))
-		self.exploits.append(ChallengeTwoUpload(self.ip_address))
-		self.exploits.append(ChallengeFourLFI(self.ip_address))
-		self.exploits.append(ChallengeFiveSQLi(self.ip_address))
+		self.exploits.append(ExploitDefaultCredentials(ip_address=ip_address, parsed_config=parsed_config))
+		self.exploits.append(BackdoorTwoShellPHP(ip_address=ip_address, parsed_config=parsed_config))
+		self.exploits.append(ChallengeOnePython(ip_address=ip_address, parsed_config=parsed_config))
+		self.exploits.append(ChallengeTwoUpload(ip_address=ip_address, parsed_config=parsed_config))
+		self.exploits.append(ChallengeFourLFI(ip_address=ip_address, parsed_config=parsed_config))
+		self.exploits.append(ChallengeFiveSQLi(ip_address=ip_address, parsed_config=parsed_config))
 
 	def __repr__(self) -> str:
 		"""
