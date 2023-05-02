@@ -9,8 +9,8 @@ COLOR_FAIL = '\033[91m'
 COLOR_END = '\033[0m'
 
 class ChallengeOnePython(Exploit):
-	def __init__(self, ip_address) -> None:
-		super().__init__(ip_address=ip_address)
+	def __init__(self, ip_address, parsed_config) -> None:
+		super().__init__(ip_address=ip_address, parsed_config=parsed_config)
 
 	def run_custom_command(self, command):
 		port = 2222

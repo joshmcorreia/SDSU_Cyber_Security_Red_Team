@@ -9,8 +9,8 @@ COLOR_FAIL = '\033[91m'
 COLOR_END = '\033[0m'
 
 class ChallengeTwoUpload(Exploit):
-	def __init__(self, ip_address) -> None:
-		super().__init__(ip_address=ip_address)
+	def __init__(self, ip_address, parsed_config) -> None:
+		super().__init__(ip_address=ip_address, parsed_config=parsed_config)
 
 	def upload_file_to_server(self, file_name):
 		url = f"http://{self.ip_address}/arbitrary_file_upload/upload.php"
