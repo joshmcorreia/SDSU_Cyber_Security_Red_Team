@@ -1,3 +1,4 @@
+ip_list_url: "http://192.168.65.1:8000/clients.txt"
 ips:
   - 192.168.199.129
 credentials:
