@@ -1,5 +1,6 @@
 from TargetMachine import TargetMachine
 import requests
+import socket
 import yaml
 from BetterLogger import logger
 
@@ -75,7 +76,7 @@ class HiveMind:
 
 	def test_all_machines_for_vulnerabilities(self):
 		for ip, machine in self.target_machines.items():
-			logger.info(f"===== CHECKING IF {ip} IS VULNERABLE =====")
+			logger.info(f"===== CHECKING {ip} FOR VULNERABILITIES =====")
 			machine.test_all_vulnerabilities()
 
 	def check_all_machines_for_root_netcat_server(self):
@@ -84,11 +85,8 @@ class HiveMind:
 
 	def start_root_netcat_server_on_all_machines(self):
 		for ip, machine in self.target_machines.items():
-			for exploit in machine.exploits:
-				try:
-					exploit.start_root_netcat_server()
-				except Exception:
-					pass
+			logger.info(f"===== STARTING ROOT NETCAT SERVER ON {ip} =====")
+			machine.start_root_netcat_server()
 
 def main():
 	hivemind = HiveMind()

