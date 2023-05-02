@@ -17,7 +17,7 @@ class TargetMachine:
 
 	Each machine has multiple exploits that can be run on it
 	"""
-	def __init__(self, ip_address, credentials, public_ssh_key_to_inject):
+	def __init__(self, ip_address, credentials):
 		self.ip_address = ip_address
 		self.got_root = False
 		self.credentials = credentials
