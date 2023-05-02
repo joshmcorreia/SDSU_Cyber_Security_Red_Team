@@ -14,6 +14,7 @@ class HiveMind:
 	HiveMind keeps track of all target machines and allows you to mass-control machines
 	"""
 	def __init__(self) -> None:
+		self.parsed_config = self.read_config_file()
 		self.target_machines = {}
 
 	def read_config_file(self):
@@ -26,9 +27,8 @@ class HiveMind:
 
 	def add_new_target_machines_from_config(self):
 		logger.info(f"Updating list of target machines based on the local config file...")
-		parsed_config = self.read_config_file()
-		target_ips = parsed_config["ips"]
-		credentials = parsed_config["credentials"]
+		target_ips = self.parsed_config["ips"]
+		credentials = self.parsed_config["credentials"]
 		added_ips = []
 		for ip in target_ips:
 			if ip not in self.target_machines:
@@ -44,21 +44,34 @@ class HiveMind:
 		"""
 		Reads a list of IPs from a URL and updates the target machines based on that list
 		"""
-		ip_list_url = "http://192.168.65.1:8000/clients.txt"
-		server_response = requests.get(ip_list_url)
-		server_status_code = server_response.status_code
-		server_response_text = server_response.text
-		list_of_ips = server_response_text.split()
-		logger.info(list_of_ips)
+		try:
+			ip_list_url = self.parsed_config["ip_list_url"]
+			logger.info(f"Getting the list of target machines from `{ip_list_url}`...")
+			server_response = requests.get(ip_list_url, timeout=3)
+			server_response_text = server_response.text
+			list_of_ips = server_response_text.split()
 
-		parsed_config = self.read_config_file()
-		credentials = parsed_config["credentials"]
-		for ip in list_of_ips:
-			if ip not in self.target_machines:
-				new_user = TargetMachine(ip_address=ip, credentials=credentials)
-				self.target_machines[ip] = new_user
+			for ip in list(self.target_machines): # use a list to avoid "dictionary changed size during iteration"
+				if ip not in list_of_ips:
+					logger.info(f"Removing `{ip}` from the list of IPs because it disconnected from the VPN.")
+					self.target_machines.pop(ip)
 
-		return self.target_machines
+			credentials = self.parsed_config["credentials"]
+			added_ips = []
+			for ip in list_of_ips:
+				if ip not in self.target_machines:
+					new_user = TargetMachine(ip_address=ip, credentials=credentials)
+					self.target_machines[ip] = new_user
+					added_ips.append(ip)
+			if len(added_ips) == 0:
+				logger.info("All IPs are already in the list of target machines.")
+			else:
+				logger.info(f"Successfully added {len(added_ips)} new IPs: {added_ips}.")
+
+			return self.target_machines
+		except Exception:
+			logger.warning(f"Failed to get a list of target machines from `{ip_list_url}`.")
+			return False
 
 	def test_all_machines_for_vulnerabilities(self):
 		for ip, machine in self.target_machines.items():
