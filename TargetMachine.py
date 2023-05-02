@@ -35,3 +35,17 @@ class TargetMachine:
 		Represent the Object as a string
 		"""
 		return f"{type(self).__name__}({self.ip_address})"
+
+	def test_all_vulnerabilities(self):
+		"""
+		Tests if the machine is vulnerable
+
+		Returns how many vulnerabilities the target machine has
+		"""
+		num_vulnerabilities = 0
+		for exploit in self.exploits:
+			exploit_is_vulnerable = exploit.test_if_vulnerable()
+			if exploit_is_vulnerable:
+				num_vulnerabilities += 1
+		return num_vulnerabilities
+
