@@ -1,4 +1,5 @@
 ip_list_url: "http://192.168.65.1:8000/clients.txt"
+root_netcat_server_port: 42069
 ips:
   - 192.168.199.129
 credentials:
