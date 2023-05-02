@@ -78,6 +78,10 @@ class HiveMind:
 			logger.info(f"===== CHECKING IF {ip} IS VULNERABLE =====")
 			machine.test_all_vulnerabilities()
 
+	def check_all_machines_for_root_netcat_server(self):
+		for ip, machine in self.target_machines.items():
+			machine.check_if_root_netcat_server_is_running()
+
 	def start_root_netcat_server_on_all_machines(self):
 		for ip, machine in self.target_machines.items():
 			for exploit in machine.exploits:
