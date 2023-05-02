@@ -3,6 +3,7 @@ from ChallengeOnePython import ChallengeOnePython
 from ChallengeTwoShellPHP import ChallengeTwoShellPHP
 from ChallengeTwoUpload import ChallengeTwoUpload
 from ChallengeFourLFI import ChallengeFourLFI
+from ChallengeFiveSQLi import ChallengeFiveSQLi
 
 COLOR_OKGREEN = '\033[92m'
 COLOR_OKBLUE = '\033[94m'
@@ -28,6 +29,7 @@ class TargetMachine:
 		self.exploits.append(ChallengeTwoUpload(self.ip_address))
 		self.exploits.append(ChallengeTwoShellPHP(self.ip_address))
 		self.exploits.append(ChallengeFourLFI(self.ip_address))
+		self.exploits.append(ChallengeFiveSQLi(self.ip_address))
 
 	def __repr__(self) -> str:
 		"""
