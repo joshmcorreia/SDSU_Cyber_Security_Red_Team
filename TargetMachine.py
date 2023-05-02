@@ -2,7 +2,7 @@ from ExploitDefaultCredentials import ExploitDefaultCredentials
 from ChallengeOnePython import ChallengeOnePython
 from ChallengeTwoShellPHP import ChallengeTwoShellPHP
 from ChallengeTwoUpload import ChallengeTwoUpload
-from ChallengeThreeLFI import ChallengeThreeLFI
+from ChallengeFourLFI import ChallengeFourLFI
 
 COLOR_OKGREEN = '\033[92m'
 COLOR_OKBLUE = '\033[94m'
@@ -27,7 +27,7 @@ class TargetMachine:
 		self.exploits.append(ChallengeOnePython(self.ip_address))
 		self.exploits.append(ChallengeTwoUpload(self.ip_address))
 		self.exploits.append(ChallengeTwoShellPHP(self.ip_address))
-		self.exploits.append(ChallengeThreeLFI(self.ip_address))
+		self.exploits.append(ChallengeFourLFI(self.ip_address))
 
 	def __repr__(self) -> str:
 		"""
