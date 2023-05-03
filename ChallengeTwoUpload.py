@@ -42,7 +42,7 @@ class ChallengeTwoUpload(Exploit):
 				uploaded_normal_image = self.upload_normal_image()
 				if not uploaded_normal_image:
 					logger.info(f"{BetterLogger.COLOR_PINK}{self.ip_address} - The student incorrectly patched ChallengeTwoUpload so images cannot be uploaded!{BetterLogger.COLOR_END}")
-					return False
+					return None
 				logger.info(f"{BetterLogger.COLOR_YELLOW}{self.ip_address} - The target is not vulnerable to ChallengeTwoUpload.{BetterLogger.COLOR_END}")
 				return False
 		except requests.ConnectionError:
