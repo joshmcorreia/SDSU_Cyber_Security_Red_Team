@@ -25,6 +25,9 @@ class ChallengeFourLFI(Exploit):
 				return True
 			logger.info(f"{BetterLogger.COLOR_YELLOW}{self.ip_address} - The target is not vulnerable to ChallengeFourLFI.{BetterLogger.COLOR_END}")
 			return False
+		except requests.ConnectionError:
+			logger.info(f"{BetterLogger.COLOR_PINK}{self.ip_address} - Unable to test ChallengeFourLFI because the student disabled the apache2 service!{BetterLogger.COLOR_END}")
+			return None
 		except Exception as err:
 			logger.info(f"{BetterLogger.COLOR_RED}{self.ip_address} - Something went wrong while checking if ChallengeFourLFI is vulnerable.{BetterLogger.COLOR_END}")
 			logger.exception(err)

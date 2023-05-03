@@ -36,6 +36,9 @@ class BackdoorTwoShellPHP(Exploit):
 				logger.info(f"{BetterLogger.COLOR_GREEN}{self.ip_address} - The target is vulnerable to BackdoorTwoShellPHP!{BetterLogger.COLOR_END}")
 				return True
 			raise PatchedException()
+		except requests.ConnectionError:
+			logger.info(f"{BetterLogger.COLOR_PINK}{self.ip_address} - Unable to test BackdoorTwoShellPHP because the student disabled the apache2 service!{BetterLogger.COLOR_END}")
+			return None
 		except PatchedException:
 			logger.info(f"{BetterLogger.COLOR_YELLOW}{self.ip_address} - The target is not vulnerable to BackdoorTwoShellPHP.{BetterLogger.COLOR_END}")
 			return False

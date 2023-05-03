@@ -46,8 +46,8 @@ class ChallengeTwoUpload(Exploit):
 				logger.info(f"{BetterLogger.COLOR_YELLOW}{self.ip_address} - The target is not vulnerable to ChallengeTwoUpload.{BetterLogger.COLOR_END}")
 				return False
 		except requests.ConnectionError:
-			logger.info(f"{BetterLogger.COLOR_RED}{self.ip_address} - The apache2 service is not running!{BetterLogger.COLOR_END}")
-			return False
+			logger.info(f"{BetterLogger.COLOR_PINK}{self.ip_address} - Unable to test ChallengeTwoUpload because the student disabled the apache2 service!{BetterLogger.COLOR_END}")
+			return None
 		except Exception as err:
 			logger.info(f"{BetterLogger.COLOR_RED}{self.ip_address} - Something went wrong while checking if ChallengeTwoUpload is vulnerable.{BetterLogger.COLOR_END}")
 			logger.exception(err)

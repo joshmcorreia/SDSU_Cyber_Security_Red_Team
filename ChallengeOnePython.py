@@ -46,7 +46,7 @@ class ChallengeOnePython(Exploit):
 				logger.info(f"{BetterLogger.COLOR_GREEN}{self.ip_address} - The target is vulnerable to ChallengeOnePython!{BetterLogger.COLOR_END}")
 				return True
 			except ConnectionRefusedError:
-				logger.info(f"{BetterLogger.COLOR_PINK}{self.ip_address} - The challenge one python service is not running!{BetterLogger.COLOR_END}")
+				logger.info(f"{BetterLogger.COLOR_PINK}{self.ip_address} - Unable to test ChallengeOnePython because the Python wrapper is not running!{BetterLogger.COLOR_END}")
 				return None
 		except PatchedException:
 			logger.info(f"{BetterLogger.COLOR_YELLOW}{self.ip_address} - The target is not vulnerable to ChallengeOnePython.{BetterLogger.COLOR_END}")
