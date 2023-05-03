@@ -23,6 +23,15 @@ class ChallengeFourLFI(Exploit):
 			if "daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin" in server_response_text:
 				logger.info(f"{BetterLogger.COLOR_GREEN}{self.ip_address} - The target is vulnerable to ChallengeFourLFI!{BetterLogger.COLOR_END}")
 				return True
+
+			# ensure that original functionality is maintained
+			language = "urbandictionary"
+			server_response = requests.get(f"http://{self.ip_address}/lfi/lfi.php?language={language}", timeout=3)
+			server_response_text = server_response.text
+			if "The reason most people need a new hard drive" not in server_response_text:
+				logger.info(f"{BetterLogger.COLOR_PINK}{self.ip_address} - The student incorrectly patched ChallengeFourLFI so choosing a language no longer works correctly!{BetterLogger.COLOR_END}")
+				return None
+
 			logger.info(f"{BetterLogger.COLOR_YELLOW}{self.ip_address} - The target is not vulnerable to ChallengeFourLFI.{BetterLogger.COLOR_END}")
 			return False
 		except requests.ConnectionError:
