@@ -23,7 +23,7 @@ class ChallengeTwoUpload(Exploit):
 		return self.upload_file_to_server(file_name="./exploits/challenge2/1234.png")
 
 	def upload_shell_php(self):
-		return self.upload_file_to_server(file_name="./exploits/challenge2/shell.php")
+		return self.upload_file_to_server(file_name="./exploits/challenge2/image.php")
 	
 	def run_custom_command(self, command):
 		raise NotImplementedError
