@@ -24,6 +24,15 @@ class ChallengeFiveSQLi(Exploit):
 			if "FBI Headquarters" in server_response_text:
 				logger.info(f"{BetterLogger.COLOR_GREEN}{self.ip_address} - The target is vulnerable to ChallengeFiveSQLi!{BetterLogger.COLOR_END}")
 				return True
+
+			# check that it stills works correctly
+			payload = {'codename_input': 'emoney', 'submitted': 'TRUE'}
+			server_response = requests.post(url, payload, timeout=3)
+			server_response_text = server_response.text
+			if "<b>Operation Name:</b> Evil Corp<br><b>Operation Target:</b>" not in server_response_text:
+				logger.info(f"{BetterLogger.COLOR_PINK}{self.ip_address} - The student incorrectly patched ChallengeFiveSQLi so normal SQL queries do not work!{BetterLogger.COLOR_END}")
+				return None
+
 			logger.info(f"{BetterLogger.COLOR_YELLOW}{self.ip_address} - The target is not vulnerable to ChallengeFiveSQLi.{BetterLogger.COLOR_END}")
 			return False
 		except Exception as err:
