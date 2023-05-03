@@ -1,11 +1,6 @@
 import yaml
 from BetterLogger import logger
 
-COLOR_OKGREEN = '\033[92m'
-COLOR_OKBLUE = '\033[94m'
-COLOR_FAIL = '\033[91m'
-COLOR_END = '\033[0m'
-
 def read_config_file():
 	logger.debug("Reading config file...")
 	with open("config.yaml", 'r') as file_in:

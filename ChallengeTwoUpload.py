@@ -1,12 +1,7 @@
 import requests
 from Exploit import Exploit
+import BetterLogger
 from BetterLogger import logger
-
-COLOR_OKGREEN = '\033[92m'
-COLOR_OKBLUE = '\033[94m'
-COLOR_ORANGE = '\033[93m'
-COLOR_FAIL = '\033[91m'
-COLOR_END = '\033[0m'
 
 class ChallengeTwoUpload(Exploit):
 	def __init__(self, ip_address, parsed_config) -> None:
@@ -41,18 +36,18 @@ class ChallengeTwoUpload(Exploit):
 			logger.info(f"{self.ip_address} - Testing if the target is vulnerable to ChallengeTwoUpload...")
 			uploaded_shell_php = self.upload_shell_php()
 			if uploaded_shell_php:
-				logger.info(f"{COLOR_OKGREEN}{self.ip_address} - The target is vulnerable to ChallengeTwoUpload!{COLOR_END}")
+				logger.info(f"{BetterLogger.COLOR_GREEN}{self.ip_address} - The target is vulnerable to ChallengeTwoUpload!{BetterLogger.COLOR_END}")
 				return True
 			else:
 				uploaded_normal_image = self.upload_normal_image()
 				if not uploaded_normal_image:
-					logger.info(f"{COLOR_ORANGE}{self.ip_address} - The student incorrectly patched ChallengeTwoUpload so images cannot be uploaded!{COLOR_END}")
+					logger.info(f"{BetterLogger.COLOR_ORANGE}{self.ip_address} - The student incorrectly patched ChallengeTwoUpload so images cannot be uploaded!{BetterLogger.COLOR_END}")
 					return False
-				logger.info(f"{COLOR_FAIL}{self.ip_address} - The target is not vulnerable to ChallengeTwoUpload.{COLOR_END}")
+				logger.info(f"{BetterLogger.COLOR_RED}{self.ip_address} - The target is not vulnerable to ChallengeTwoUpload.{BetterLogger.COLOR_END}")
 				return False
 		except requests.ConnectionError:
-			logger.info(f"{COLOR_ORANGE}{self.ip_address} - The apache2 service is not running!{COLOR_END}")
+			logger.info(f"{BetterLogger.COLOR_ORANGE}{self.ip_address} - The apache2 service is not running!{BetterLogger.COLOR_END}")
 			return False
 		except Exception:
-			logger.info(f"{COLOR_ORANGE}{self.ip_address} - Something went wrong while checking if ChallengeTwoUpload is vulnerable.{COLOR_END}")
+			logger.info(f"{BetterLogger.COLOR_ORANGE}{self.ip_address} - Something went wrong while checking if ChallengeTwoUpload is vulnerable.{BetterLogger.COLOR_END}")
 			return False

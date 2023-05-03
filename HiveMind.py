@@ -4,12 +4,6 @@ import socket
 import yaml
 from BetterLogger import logger
 
-COLOR_OKGREEN = '\033[92m'
-COLOR_OKBLUE = '\033[94m'
-COLOR_ORANGE = '\033[93m'
-COLOR_FAIL = '\033[91m'
-COLOR_END = '\033[0m'
-
 class HiveMind:
 	"""
 	HiveMind keeps track of all target machines and allows you to mass-control machines

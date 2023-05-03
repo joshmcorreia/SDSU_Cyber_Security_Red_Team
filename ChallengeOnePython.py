@@ -1,12 +1,7 @@
 import socket
 from Exploit import Exploit, PatchedException
+import BetterLogger
 from BetterLogger import logger
-
-COLOR_OKGREEN = '\033[92m'
-COLOR_OKBLUE = '\033[94m'
-COLOR_ORANGE = '\033[93m'
-COLOR_FAIL = '\033[91m'
-COLOR_END = '\033[0m'
 
 class ChallengeOnePython(Exploit):
 	def __init__(self, ip_address, parsed_config) -> None:
@@ -48,17 +43,17 @@ class ChallengeOnePython(Exploit):
 			command = "whoami"
 			try:
 				self.run_custom_command(command=command)
-				logger.info(f"{COLOR_OKGREEN}{self.ip_address} - The target is vulnerable to ChallengeOnePython!{COLOR_END}")
+				logger.info(f"{BetterLogger.COLOR_GREEN}{self.ip_address} - The target is vulnerable to ChallengeOnePython!{BetterLogger.COLOR_END}")
 				return True
 			except ConnectionRefusedError:
-				logger.info(f"{COLOR_ORANGE}{self.ip_address} - The challenge one python service is not running!{COLOR_END}")
+				logger.info(f"{BetterLogger.COLOR_ORANGE}{self.ip_address} - The challenge one python service is not running!{BetterLogger.COLOR_END}")
 				return False
 			except socket.timeout:
-				logger.info(f"{COLOR_ORANGE}{self.ip_address} - The challenge one python service timed out!{COLOR_END}")
+				logger.info(f"{BetterLogger.COLOR_ORANGE}{self.ip_address} - The challenge one python service timed out!{BetterLogger.COLOR_END}")
 				return False
 		except PatchedException:
-			logger.info(f"{COLOR_FAIL}{self.ip_address} - The target is not vulnerable to ChallengeOnePython.{COLOR_END}")
+			logger.info(f"{BetterLogger.COLOR_RED}{self.ip_address} - The target is not vulnerable to ChallengeOnePython.{BetterLogger.COLOR_END}")
 			return False
 		except Exception:
-			logger.info(f"{COLOR_ORANGE}{self.ip_address} - Something went wrong while checking if ChallengeOnePython is vulnerable.{COLOR_END}")
+			logger.info(f"{BetterLogger.COLOR_ORANGE}{self.ip_address} - Something went wrong while checking if ChallengeOnePython is vulnerable.{BetterLogger.COLOR_END}")
 			return False

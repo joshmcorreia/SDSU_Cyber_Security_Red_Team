@@ -17,3 +17,9 @@ file_handler.setFormatter(formatter)
 
 logger.addHandler(stdout_handler)
 logger.addHandler(file_handler)
+
+COLOR_GREEN = '\033[92m'
+COLOR_BLUE = '\033[94m'
+COLOR_ORANGE = '\033[93m'
+COLOR_RED = '\033[91m'
+COLOR_END = '\033[0m'

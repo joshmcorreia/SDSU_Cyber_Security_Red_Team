@@ -1,4 +1,5 @@
 import socket
+import BetterLogger
 from BetterLogger import logger
 from ExploitDefaultCredentials import ExploitDefaultCredentials
 from ChallengeOnePython import ChallengeOnePython
@@ -6,12 +7,6 @@ from BackdoorTwoShellPHP import BackdoorTwoShellPHP
 from ChallengeTwoUpload import ChallengeTwoUpload
 from ChallengeFourLFI import ChallengeFourLFI
 from ChallengeFiveSQLi import ChallengeFiveSQLi
-
-COLOR_OKGREEN = '\033[92m'
-COLOR_OKBLUE = '\033[94m'
-COLOR_ORANGE = '\033[93m'
-COLOR_FAIL = '\033[91m'
-COLOR_END = '\033[0m'
 
 class TargetMachine:
 	"""
@@ -65,10 +60,10 @@ class TargetMachine:
 			socket_connection.connect((self.ip_address, port))
 			socket_connection.settimeout(None)
 			logger.debug(f"{self.ip_address} - Successfully connected to port {port}.")
-			logger.info(f"{COLOR_OKGREEN}{self.ip_address} - A root netcat server is running on the target machine!{COLOR_END}")
+			logger.info(f"{BetterLogger.COLOR_GREEN}{self.ip_address} - A root netcat server is running on the target machine!{BetterLogger.COLOR_END}")
 			return True
 		except Exception:
-			logger.info(f"{self.ip_address} - A root netcat server is not currently running on the target machine.{COLOR_END}")
+			logger.info(f"{BetterLogger.COLOR_RED}{self.ip_address} - A root netcat server is not currently running on the target machine.{BetterLogger.COLOR_END}")
 			return False
 
 	def start_root_netcat_server(self):
@@ -86,5 +81,5 @@ class TargetMachine:
 					return True
 			except Exception:
 				continue
-		logger.info(f"{COLOR_FAIL}Failed to start a root netcat server on port {port}!{COLOR_END}")
+		logger.info(f"{BetterLogger.COLOR_RED}Failed to start a root netcat server on port {port}!{BetterLogger.COLOR_END}")
 		return False
