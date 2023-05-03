@@ -68,9 +68,19 @@ class HiveMind:
 			logger.warning(f"Failed to get a list of target machines from `{ip_list_url}`.")
 			return False
 
+	def ping_all_machines(self):
+		logger.info(f"Pinging all machines...")
+		for ip, machine in self.target_machines.items():
+			machine.ping()
+		logger.info(f"Finished pinging all machines.")
+
 	def test_all_machines_for_vulnerabilities(self):
 		for ip, machine in self.target_machines.items():
 			logger.info(f"===== CHECKING {ip} FOR VULNERABILITIES =====")
+
+			if machine.ping() == False:
+				continue
+
 			machine.test_all_vulnerabilities()
 
 	def check_all_machines_for_root_netcat_server(self):

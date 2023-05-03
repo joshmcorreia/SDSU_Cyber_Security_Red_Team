@@ -1,4 +1,5 @@
 import socket
+import subprocess
 import BetterLogger
 from BetterLogger import logger
 from ExploitDefaultCredentials import ExploitDefaultCredentials
@@ -27,6 +28,21 @@ class TargetMachine:
 		self.exploits.append(ChallengeTwoUpload(ip_address=ip_address, parsed_config=parsed_config))
 		self.exploits.append(ChallengeFourLFI(ip_address=ip_address, parsed_config=parsed_config))
 		self.exploits.append(ChallengeFiveSQLi(ip_address=ip_address, parsed_config=parsed_config))
+
+	def ping(self):
+		"""
+		Tests if the target machine is online
+
+		Returns True if the target is online, False if the target is offline
+		"""
+		logger.info(f"{self.ip_address} - Pinging the target machine to see if it is online...")
+		return_code = subprocess.call(f"ping -c 1 {self.ip_address}", stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, shell=True)
+		if return_code == 1:
+			logger.info(f"{BetterLogger.COLOR_RED}{self.ip_address} - The target machine is offline.{BetterLogger.COLOR_END}")
+			return False
+		else:
+			logger.info(f"{self.ip_address} - The target machine is online.")
+			return True
 
 	def __repr__(self) -> str:
 		"""
