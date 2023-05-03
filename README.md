@@ -9,6 +9,12 @@ I originally took this course in 2019 and was assigned to Red Team because of so
 
 ## Using HiveMind:
 
+### Colored log explanation:
+- BLUE - indicates that a root shell was successfully started
+- GREEN - indicates something was successful
+- ORANGE - indicates that the exploit/vulnerability has been patched by the student
+- RED - indicates that something went wrong, such as a connection timed out or the target machine is offline
+
 ### Starting a Python shell:
 ```
 cd ~/SDSU_Cyber_Security_Red_Team
@@ -29,12 +35,22 @@ hivemind.add_new_target_machines_from_ip_list()
 hivemind.add_new_target_machines_from_ip_list()
 ```
 
-### Testing all machines for vulnerabilities:
+### Ping all target machines:
+```
+hivemind.ping_all_target_machines()
+```
+
+### Test all target machines for vulnerabilities:
 ```
 hivemind.test_all_machines_for_vulnerabilities()
 ```
 
-### Starting a root netcat server on all target machines:
+### Check all target machines for a root netcat server:
+```
+hivemind.check_all_machines_for_root_netcat_server()
+```
+
+### Start a root netcat server on all target machines:
 ```
 hivemind.start_root_netcat_server_on_all_machines()
 ```
