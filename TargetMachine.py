@@ -41,7 +41,7 @@ class TargetMachine:
 			logger.info(f"{BetterLogger.COLOR_RED}{self.ip_address} - The target machine is offline.{BetterLogger.COLOR_END}")
 			return False
 		else:
-			logger.info(f"{self.ip_address} - The target machine is online.")
+			logger.info(f"{BetterLogger.COLOR_GREEN}{self.ip_address} - The target machine is online.{BetterLogger.COLOR_END}")
 			return True
 
 	def __repr__(self) -> str:
