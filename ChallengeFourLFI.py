@@ -24,14 +24,14 @@ class ChallengeFourLFI(Exploit):
 			if "daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin" in server_response_text:
 				logger.info(f"{BetterLogger.COLOR_GREEN}{self.ip_address} - The target is vulnerable to ChallengeFourLFI!{BetterLogger.COLOR_END}")
 				return True
-			logger.info(f"{BetterLogger.COLOR_RED}{self.ip_address} - The target is not vulnerable to ChallengeFourLFI.{BetterLogger.COLOR_END}")
+			logger.info(f"{BetterLogger.COLOR_YELLOW}{self.ip_address} - The target is not vulnerable to ChallengeFourLFI.{BetterLogger.COLOR_END}")
 			return False
 		except PatchedException:
-			logger.info(f"{BetterLogger.COLOR_RED}{self.ip_address} - The target is not vulnerable to ChallengeFourLFI.{BetterLogger.COLOR_END}")
+			logger.info(f"{BetterLogger.COLOR_YELLOW}{self.ip_address} - The target is not vulnerable to ChallengeFourLFI.{BetterLogger.COLOR_END}")
 			return False
 		except requests.ConnectTimeout:
-			logger.info(f"{BetterLogger.COLOR_ORANGE}{self.ip_address} - The request timed out while checking if ChallengeFourLFI is vulnerable.{BetterLogger.COLOR_END}")
+			logger.info(f"{BetterLogger.COLOR_RED}{self.ip_address} - The request timed out while checking if ChallengeFourLFI is vulnerable.{BetterLogger.COLOR_END}")
 			return False
 		except Exception:
-			logger.info(f"{BetterLogger.COLOR_ORANGE}{self.ip_address} - Something went wrong while checking if ChallengeFourLFI is vulnerable.{BetterLogger.COLOR_END}")
+			logger.info(f"{BetterLogger.COLOR_RED}{self.ip_address} - Something went wrong while checking if ChallengeFourLFI is vulnerable.{BetterLogger.COLOR_END}")
 			return False

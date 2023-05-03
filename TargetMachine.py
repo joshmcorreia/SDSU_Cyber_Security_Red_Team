@@ -76,7 +76,7 @@ class TargetMachine:
 			socket_connection.connect((self.ip_address, port))
 			socket_connection.settimeout(None)
 			logger.debug(f"{self.ip_address} - Successfully connected to port {port}.")
-			logger.info(f"{BetterLogger.COLOR_GREEN}{self.ip_address} - A root netcat server is running on the target machine!{BetterLogger.COLOR_END}")
+			logger.info(f"{BetterLogger.COLOR_BLUE}{self.ip_address} - A root netcat server is running on the target machine!{BetterLogger.COLOR_END}")
 			return True
 		except Exception:
 			logger.info(f"{BetterLogger.COLOR_RED}{self.ip_address} - A root netcat server is not currently running on the target machine.{BetterLogger.COLOR_END}")
