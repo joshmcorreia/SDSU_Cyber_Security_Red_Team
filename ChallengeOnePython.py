@@ -1,5 +1,5 @@
 import socket
-from Exploit import Exploit, PatchedException
+from Exploit import Exploit, PatchedException, IncorrectPatchException
 import BetterLogger
 from BetterLogger import logger
 
@@ -28,6 +28,12 @@ class ChallengeOnePython(Exploit):
 			socket_response = data.decode()
 		socket_connection.close()
 		logger.debug(f"{self.ip_address} - The server responded with `{socket_response}`")
+
+		# ensure "ls" works properly
+		if "pvuln2_wrapper.py" not in socket_response:
+			logger.info(f"{BetterLogger.COLOR_PINK}{self.ip_address} - The student incorrectly patched ChallengeOnePython so 'ls' no longer outputs correctly!{BetterLogger.COLOR_END}")
+			raise IncorrectPatchException()
+
 		try:
 			server_output = socket_response.split("0x1x2x3")[1].strip() # split on `0x1x2x3` so we can parse for the command injection output
 			return server_output
@@ -45,6 +51,8 @@ class ChallengeOnePython(Exploit):
 				self.run_custom_command(command=command)
 				logger.info(f"{BetterLogger.COLOR_GREEN}{self.ip_address} - The target is vulnerable to ChallengeOnePython!{BetterLogger.COLOR_END}")
 				return True
+			except IncorrectPatchException:
+				return False
 			except ConnectionRefusedError:
 				logger.info(f"{BetterLogger.COLOR_PINK}{self.ip_address} - Unable to test ChallengeOnePython because the Python wrapper is not running!{BetterLogger.COLOR_END}")
 				return None
