@@ -27,7 +27,7 @@ class ChallengeOnePython(Exploit):
 				break
 			socket_response = data.decode()
 		socket_connection.close()
-		logger.debug(socket_response)
+		logger.debug(f"{self.ip_address} - The server responded with `{socket_response}`")
 		try:
 			server_output = socket_response.split("0x1x2x3")[1].strip() # split on `0x1x2x3` so we can parse for the command injection output
 			return server_output
@@ -48,12 +48,10 @@ class ChallengeOnePython(Exploit):
 			except ConnectionRefusedError:
 				logger.info(f"{BetterLogger.COLOR_PINK}{self.ip_address} - The challenge one python service is not running!{BetterLogger.COLOR_END}")
 				return False
-			except socket.timeout:
-				logger.info(f"{BetterLogger.COLOR_RED}{self.ip_address} - The challenge one python service timed out!{BetterLogger.COLOR_END}")
-				return False
 		except PatchedException:
-			logger.info(f"{BetterLogger.COLOR_YELLOW}{self.ip_address} - The target is not vulnerable to ChallengeOnePython.{BetterLogger.COLOR_END}")
+			logger.info(f"{BetterLogger.COLOR_YELLOW}{self.ip_address} - The target is not vulnerable to ChallengeOnePython because it has been patched.{BetterLogger.COLOR_END}")
 			return False
-		except Exception:
+		except Exception as err:
 			logger.info(f"{BetterLogger.COLOR_RED}{self.ip_address} - Something went wrong while checking if ChallengeOnePython is vulnerable.{BetterLogger.COLOR_END}")
+			logger.exception(err)
 			return False

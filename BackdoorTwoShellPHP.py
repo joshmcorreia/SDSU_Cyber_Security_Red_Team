@@ -39,9 +39,6 @@ class BackdoorTwoShellPHP(Exploit):
 		except PatchedException:
 			logger.info(f"{BetterLogger.COLOR_YELLOW}{self.ip_address} - The target is not vulnerable to BackdoorTwoShellPHP.{BetterLogger.COLOR_END}")
 			return False
-		except requests.ConnectTimeout:
-			logger.info(f"{BetterLogger.COLOR_RED}{self.ip_address} - The request timed out while checking if BackdoorTwoShellPHP is vulnerable.{BetterLogger.COLOR_END}")
-			return False
 		except Exception:
 			logger.info(f"{BetterLogger.COLOR_RED}{self.ip_address} - Something went wrong while checking if BackdoorTwoShellPHP is vulnerable.{BetterLogger.COLOR_END}")
 			return False

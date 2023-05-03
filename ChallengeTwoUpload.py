@@ -48,6 +48,7 @@ class ChallengeTwoUpload(Exploit):
 		except requests.ConnectionError:
 			logger.info(f"{BetterLogger.COLOR_RED}{self.ip_address} - The apache2 service is not running!{BetterLogger.COLOR_END}")
 			return False
-		except Exception:
+		except Exception as err:
 			logger.info(f"{BetterLogger.COLOR_RED}{self.ip_address} - Something went wrong while checking if ChallengeTwoUpload is vulnerable.{BetterLogger.COLOR_END}")
+			logger.exception(err)
 			return False

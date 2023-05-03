@@ -1,5 +1,5 @@
 import requests
-from Exploit import Exploit, PatchedException
+from Exploit import Exploit
 import BetterLogger
 from BetterLogger import logger
 
@@ -26,12 +26,7 @@ class ChallengeFiveSQLi(Exploit):
 				return True
 			logger.info(f"{BetterLogger.COLOR_YELLOW}{self.ip_address} - The target is not vulnerable to ChallengeFiveSQLi.{BetterLogger.COLOR_END}")
 			return False
-		except PatchedException:
-			logger.info(f"{BetterLogger.COLOR_YELLOW}{self.ip_address} - The target is not vulnerable to ChallengeFiveSQLi.{BetterLogger.COLOR_END}")
-			return False
-		except requests.ConnectTimeout:
-			logger.info(f"{BetterLogger.COLOR_RED}{self.ip_address} - The request timed out while checking if ChallengeFiveSQLi is vulnerable.{BetterLogger.COLOR_END}")
-			return False
-		except Exception:
+		except Exception as err:
 			logger.info(f"{BetterLogger.COLOR_RED}{self.ip_address} - Something went wrong while checking if ChallengeFiveSQLi is vulnerable.{BetterLogger.COLOR_END}")
+			logger.exception(err)
 			return False
