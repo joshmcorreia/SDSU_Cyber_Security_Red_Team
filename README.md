@@ -56,6 +56,12 @@ hivemind.check_all_machines_for_root_netcat_server()
 hivemind.start_root_netcat_server_on_all_machines()
 ```
 
+## Hellevator
+
+`hellevator.sh` elevates privileges using whatever method necessary and then creates a user with SSH keys. This script completely bypasses the need to know the user's password because in most cases the students have already changed the passwords. It is meant to be downloaded from the internet and then run as a local user. I created this script because it's easiest to have every exploit call the same code.
+
+The name is a reference to a Hell Elevator in Terraria.
+
 ---
 
 ## System Vulnerabilities
