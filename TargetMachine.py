@@ -3,6 +3,7 @@ import subprocess
 import BetterLogger
 from BetterLogger import logger
 from ExploitDefaultCredentials import ExploitDefaultCredentials
+from BackdoorOneNC import BackdoorOneNC
 from BackdoorTwoShellPHP import BackdoorTwoShellPHP
 from ChallengeOnePython import ChallengeOnePython
 from ChallengeTwoUpload import ChallengeTwoUpload
@@ -26,6 +27,7 @@ class TargetMachine:
 
 		self.exploits = []
 		self.exploits.append(ExploitDefaultCredentials(ip_address=ip_address, parsed_config=parsed_config))
+		self.exploits.append(BackdoorOneNC(ip_address=ip_address, parsed_config=parsed_config))
 		self.exploits.append(BackdoorTwoShellPHP(ip_address=ip_address, parsed_config=parsed_config))
 		self.exploits.append(ChallengeOnePython(ip_address=ip_address, parsed_config=parsed_config))
 		self.exploits.append(ChallengeTwoUpload(ip_address=ip_address, parsed_config=parsed_config))
