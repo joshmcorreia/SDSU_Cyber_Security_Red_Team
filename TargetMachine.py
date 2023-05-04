@@ -10,6 +10,7 @@ from ChallengeThreeBuffer import ChallengeThreeBuffer
 from ChallengeFourLFI import ChallengeFourLFI
 from ChallengeFiveSQLi import ChallengeFiveSQLi
 from ChallengeSixXSS import ChallengeSixXSS
+from ChallengeSevenRXSS import ChallengeSevenRXSS
 
 class TargetMachine:
 	"""
@@ -32,6 +33,7 @@ class TargetMachine:
 		self.exploits.append(ChallengeFourLFI(ip_address=ip_address, parsed_config=parsed_config))
 		self.exploits.append(ChallengeFiveSQLi(ip_address=ip_address, parsed_config=parsed_config))
 		self.exploits.append(ChallengeSixXSS(ip_address=ip_address, parsed_config=parsed_config))
+		self.exploits.append(ChallengeSevenRXSS(ip_address=ip_address, parsed_config=parsed_config))
 
 	def ping(self):
 		"""
