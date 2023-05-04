@@ -12,7 +12,8 @@ I originally took this course in 2019 and was assigned to Red Team because of so
 ### Colored log explanation:
 - BLUE - indicates that a root shell was successfully started
 - GREEN - indicates something was successful
-- ORANGE - indicates that the exploit/vulnerability has been patched by the student
+- YELLOW - indicates that the exploit/vulnerability has been patched by the student
+- PINK - indicates that the exploit/vulnerability has been incorrectly patched, so the intended functionality is no longer present
 - RED - indicates that something went wrong, such as a connection timed out or the target machine is offline
 
 ### Starting a Python shell:
