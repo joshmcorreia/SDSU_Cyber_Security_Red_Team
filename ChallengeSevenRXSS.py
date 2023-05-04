@@ -16,7 +16,7 @@ class ChallengeSevenRXSS(Exploit):
 			quote = "<script>alert();</script>"
 			server_response = requests.get(f"http://{self.ip_address}/xss/xss.php?quote={quote}", timeout=3)
 			server_response_text = server_response.text
-			logger.debug(f"Response: {server_response_text}")
+			# logger.debug(f"Response: {server_response_text}")
 			if quote in server_response_text:
 				logger.info(f"{BetterLogger.COLOR_GREEN}{self.ip_address} - The target is vulnerable to ChallengeSevenRXSS!{BetterLogger.COLOR_END}")
 				return True
@@ -25,7 +25,7 @@ class ChallengeSevenRXSS(Exploit):
 				quote = "Do or do not, there is no try"
 				server_response = requests.get(f"http://{self.ip_address}/xss/xss.php?quote={quote}", timeout=3)
 				server_response_text = server_response.text
-				logger.debug(f"Response: {server_response_text}")
+				# logger.debug(f"Response: {server_response_text}")
 				if quote not in server_response_text:
 					logger.info(f"{BetterLogger.COLOR_PINK}{self.ip_address} - The student incorrectly patched ChallengeSevenRXSS so providing a quote no longer works correctly!{BetterLogger.COLOR_END}")
 					return None

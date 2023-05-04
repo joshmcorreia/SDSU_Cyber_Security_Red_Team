@@ -9,14 +9,14 @@ class ChallengeTwoUpload(Exploit):
 
 	def upload_file_to_server(self, file_name):
 		url = f"http://{self.ip_address}/arbitrary_file_upload/upload.php"
-		logger.info(f"{self.ip_address} - Uploading `{file_name}`...")
+		# logger.debug(f"{self.ip_address} - Uploading `{file_name}`...")
 		file_to_upload = {'image': open(file_name, 'rb')}
 		server_response = requests.post(url, files=file_to_upload, timeout=3)
 		server_response_text = server_response.text
 		if "Success" in server_response_text:
-			logger.debug(f"{self.ip_address} - Successfully uploaded `{file_name}`.")
+			# logger.debug(f"{self.ip_address} - Successfully uploaded `{file_name}`.")
 			return True
-		logger.info(f"{self.ip_address} - Failed to upload `{file_name}`.")
+		# logger.debug(f"{self.ip_address} - Failed to upload `{file_name}`.")
 		return False
 
 	def upload_normal_image(self):
