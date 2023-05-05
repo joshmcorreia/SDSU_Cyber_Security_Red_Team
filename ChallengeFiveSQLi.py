@@ -1,5 +1,5 @@
 import requests
-from Exploit import Exploit
+from Exploit import Exploit, UnsupportedException
 import BetterLogger
 from BetterLogger import logger
 
@@ -7,12 +7,11 @@ class ChallengeFiveSQLi(Exploit):
 	def __init__(self, ip_address, parsed_config) -> None:
 		super().__init__(ip_address=ip_address, parsed_config=parsed_config)
 
-	def run_hellevator(self):
-		return super().run_hellevator()
+	def run_command(self, command):
+		raise UnsupportedException(f"Running commands with ChallengeFiveSQLi is not supported.")
 
-	def run_custom_command(self, command):
-		logger.info("ChallengeFiveSQLi does not support running custom commands.")
-		return False
+	def run_hellevator(self):
+		raise UnsupportedException(f"Running commands with ChallengeFiveSQLi is not supported.")
 
 	def test_if_vulnerable(self):
 		"""
