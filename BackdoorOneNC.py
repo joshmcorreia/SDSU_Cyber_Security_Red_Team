@@ -29,6 +29,7 @@ class BackdoorOneNC(Exploit):
 				socket_response = ""
 				while 1:
 					data = socket_connection.recv(1024)
+					# logger.debug(f"{self.ip_address} - The server responded with `{data}`")
 					if len(data) == 0:
 						break
 					socket_response = data.decode()

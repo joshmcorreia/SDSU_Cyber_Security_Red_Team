@@ -52,6 +52,21 @@ class TargetMachine:
 			logger.info(f"{BetterLogger.COLOR_GREEN}{self.ip_address} - The target machine is online.{BetterLogger.COLOR_END}")
 			return True
 
+	def run_hellevator(self):
+		"""
+		Attempts to run hellevator using all exploits
+
+		Returns True if successful and False if not
+		"""
+		logger.info(f"{self.ip_address} - Attempting to run hellevator on the target machine...")
+		executed_hellevator = False
+		for exploit in self.exploits:
+			ran_hellevator = exploit.run_hellevator()
+			if ran_hellevator:
+				executed_hellevator = True
+				break
+		return executed_hellevator
+
 	def __repr__(self) -> str:
 		"""
 		Represent the Object as a string
@@ -78,12 +93,12 @@ class TargetMachine:
 		try:
 			logger.info(f"{self.ip_address} - Checking if a root netcat server is already running on the target machine...")
 			port = self.parsed_config["root_netcat_server_port"]
-			logger.debug(f"{self.ip_address} - Connecting to port {port}...")
+			# logger.debug(f"{self.ip_address} - Connecting to port {port}...")
 			socket_connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 			socket_connection.settimeout(3)
 			socket_connection.connect((self.ip_address, port))
 			socket_connection.settimeout(None)
-			logger.debug(f"{self.ip_address} - Successfully connected to port {port}.")
+			# logger.debug(f"{self.ip_address} - Successfully connected to port {port}.")
 			logger.info(f"{BetterLogger.COLOR_BLUE}{self.ip_address} - A root netcat server is running on the target machine!{BetterLogger.COLOR_END}")
 			return True
 		except Exception:
