@@ -61,10 +61,13 @@ class TargetMachine:
 		logger.info(f"{self.ip_address} - Attempting to run hellevator using all exploits...")
 		executed_hellevator = False
 		for exploit in self.exploits:
-			ran_hellevator = exploit.run_hellevator()
-			if ran_hellevator:
-				executed_hellevator = True
-				break
+			try:
+				ran_hellevator = exploit.run_hellevator()
+				if ran_hellevator:
+					executed_hellevator = True
+					break
+			except Exception:
+				continue
 		return executed_hellevator
 
 	def __repr__(self) -> str:
