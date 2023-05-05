@@ -1,17 +1,17 @@
 import requests
 import BetterLogger
 from BetterLogger import logger
-from Exploit import Exploit
+from Exploit import Exploit, UnsupportedException
 
 class ChallengeSixXSS(Exploit):
 	def __init__(self, ip_address, parsed_config) -> None:
 		super().__init__(ip_address=ip_address, parsed_config=parsed_config)
 
-	def run_hellevator(self):
-		return super().run_hellevator()
+	def run_command(self, command):
+		raise UnsupportedException(f"Running commands with ChallengeSixXSS is not supported.")
 
-	def run_custom_command(self, command):
-		raise NotImplementedError
+	def run_hellevator(self):
+		raise UnsupportedException(f"Running Hellevator with ChallengeSixXSS is not supported.")
 
 	def test_if_vulnerable(self):
 		try:
