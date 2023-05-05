@@ -84,8 +84,9 @@ class HiveMind:
 			machine.test_all_vulnerabilities()
 
 	def run_hellevator_on_all_target_machines(self):
-		logger.info(f"===== RUNNING HELLEVATOR ON ALL TARGET MACHINES =====")
+		logger.info(f"***** RUNNING HELLEVATOR ON ALL TARGET MACHINES *****")
 		for ip, machine in self.target_machines.items():
+			logger.info(f"===== RUNNING HELLEVATOR ON {ip} =====")
 			machine.run_hellevator()
 
 	def check_all_machines_for_root_netcat_server(self):

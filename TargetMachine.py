@@ -58,7 +58,7 @@ class TargetMachine:
 
 		Returns True if successful and False if not
 		"""
-		logger.info(f"{self.ip_address} - Attempting to run hellevator on the target machine...")
+		logger.info(f"{self.ip_address} - Attempting to run hellevator using all exploits...")
 		executed_hellevator = False
 		for exploit in self.exploits:
 			ran_hellevator = exploit.run_hellevator()
