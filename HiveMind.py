@@ -89,24 +89,6 @@ class HiveMind:
 			logger.info(f"===== RUNNING HELLEVATOR ON {ip} =====")
 			machine.run_hellevator()
 
-	def check_all_machines_for_root_netcat_server(self):
-		for ip, machine in self.target_machines.items():
-			logger.info(f"===== CHECKING {ip} FOR A ROOT NETCAT SERVER =====")
-
-			if machine.ping() == False: # in the real world you wouldn't be able to rule out that a machine is offline based on a ping, but for the purposes of this lab it is highly unlikely that a student disabled ICMP so we can skip those target machines
-				continue
-
-			machine.check_if_root_netcat_server_is_running()
-
-	def start_root_netcat_server_on_all_machines(self):
-		for ip, machine in self.target_machines.items():
-			logger.info(f"===== STARTING ROOT NETCAT SERVER ON {ip} =====")
-
-			if machine.ping() == False: # in the real world you wouldn't be able to rule out that a machine is offline based on a ping, but for the purposes of this lab it is highly unlikely that a student disabled ICMP so we can skip those target machines
-				continue
-
-			machine.start_root_netcat_server()
-
 def main():
 	hivemind = HiveMind()
 	hivemind.add_new_target_machines_from_config()

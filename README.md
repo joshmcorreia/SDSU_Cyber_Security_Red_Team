@@ -46,16 +46,6 @@ hivemind.ping_all_target_machines()
 hivemind.test_all_machines_for_vulnerabilities()
 ```
 
-### Check all target machines for a root netcat server:
-```
-hivemind.check_all_machines_for_root_netcat_server()
-```
-
-### Start a root netcat server on all target machines:
-```
-hivemind.start_root_netcat_server_on_all_machines()
-```
-
 ## Hellevator
 
 `hellevator.sh` elevates privileges using whatever method necessary and then creates a user with SSH keys. This script completely bypasses the need to know the user's password because in most cases the students have already changed the passwords. It is meant to be downloaded from the internet and then run as a local user. I created this script because it's easiest to have every exploit call the same code.

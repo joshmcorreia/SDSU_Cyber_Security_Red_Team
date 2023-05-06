@@ -2,7 +2,6 @@ ssh_username: josh
 ssh_password: password
 ssh_public_key: ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHEVlp/30J0wOuK53YrqMTQ7SduqUw3Mj6R1vfFx76zm josh@parrot
 ip_list_url: "http://192.168.65.1:8000/clients.txt"
-root_netcat_server_port: 42069
 ips:
   - 192.168.199.129
 credentials:
