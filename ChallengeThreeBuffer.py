@@ -7,10 +7,10 @@ class ChallengeThreeBuffer(Exploit):
 	def __init__(self, ip_address, parsed_config) -> None:
 		super().__init__(ip_address=ip_address, parsed_config=parsed_config)
 
-	def run_hellevator(self):
-		return super().run_hellevator()
+	def run_command(self, command):
+		raise NotImplementedError()
 
-	def run_custom_command(self, command):
+	def run_hellevator(self):
 		raise NotImplementedError()
 
 	def test_if_vulnerable(self):
