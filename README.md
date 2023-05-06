@@ -46,6 +46,11 @@ hivemind.ping_all_target_machines()
 hivemind.test_all_machines_for_vulnerabilities()
 ```
 
+### Run Hellevator on all target machines:
+```
+hivemind.run_hellevator_on_all_target_machines()
+```
+
 ## Hellevator
 
 `hellevator.sh` elevates privileges using whatever method necessary and then creates a user with SSH keys. This script completely bypasses the need to know the user's password because in most cases the students have already changed the passwords. It is meant to be downloaded from the internet and then run as a local user. I created this script because it's easiest to have every exploit call the same code.
