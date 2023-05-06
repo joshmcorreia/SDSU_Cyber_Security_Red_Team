@@ -93,6 +93,10 @@ class HiveMind:
 		for ip, machine in self.target_machines.items():
 			try:
 				logger.info(f"===== RUNNING HELLEVATOR ON {ip} =====")
+
+				if machine.ping() == False: # in the real world you wouldn't be able to rule out that a machine is offline based on a ping, but for the purposes of this lab it is highly unlikely that a student disabled ICMP so we can skip those target machines
+					continue
+
 				machine.run_hellevator()
 			except Exception:
 				continue
@@ -106,6 +110,18 @@ class HiveMind:
 					continue
 
 				machine.check_for_hellevator()
+			except Exception:
+				continue
+
+	def install_salt_minion_on_all_target_machines(self):
+		for ip, machine in self.target_machines.items():
+			try:
+				logger.info(f"===== INSTALLING SALT MINION ON {ip} =====")
+
+				if machine.ping() == False: # in the real world you wouldn't be able to rule out that a machine is offline based on a ping, but for the purposes of this lab it is highly unlikely that a student disabled ICMP so we can skip those target machines
+					continue
+
+				machine.install_salt_minion()
 			except Exception:
 				continue
 

