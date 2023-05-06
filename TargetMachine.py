@@ -1,4 +1,4 @@
-import socket
+import paramiko
 import subprocess
 import BetterLogger
 from BetterLogger import logger
@@ -75,6 +75,24 @@ class TargetMachine:
 			except Exception:
 				continue
 		return executed_hellevator
+
+	def check_for_hellevator(self):
+		try:
+			logger.info(f"{self.ip_address} - Checking if Hellevator previously ran on the target machine...")
+
+			username = self.parsed_config["ssh_username"]
+
+			# logger.debug(f"{self.ip_address} - Logging in as `{username}` over SSH...")
+			ssh_client = paramiko.SSHClient()
+			ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+			ssh_client.connect(self.ip_address, username=username, look_for_keys=True, timeout=3) # only use SSH keys because the attacker may have changed their password
+			# logger.debug(f"{BetterLogger.COLOR_GREEN}{self.ip_address} - Successfully logged in as `{username}`.{BetterLogger.COLOR_END}")
+
+			logger.info(f"{BetterLogger.COLOR_BLUE}{self.ip_address} - Hellevator previously ran on the target machine and you have SSH access!{BetterLogger.COLOR_END}")
+			return True
+		except Exception:
+			logger.info(f"{BetterLogger.COLOR_YELLOW}{self.ip_address} - Hellevator has not been run on the target machine.{BetterLogger.COLOR_END}")
+			return True
 
 	def test_all_vulnerabilities(self):
 		"""

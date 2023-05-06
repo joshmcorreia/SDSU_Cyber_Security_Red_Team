@@ -28,7 +28,6 @@ from HiveMind import HiveMind
 hivemind = HiveMind()
 hivemind.add_new_target_machines_from_config()
 hivemind.add_new_target_machines_from_ip_list()
-
 ```
 
 ### Update the list of target machines:
@@ -49,6 +48,11 @@ hivemind.test_all_machines_for_vulnerabilities()
 ### Run Hellevator on all target machines:
 ```
 hivemind.run_hellevator_on_all_target_machines()
+```
+
+### Check if Hellevator has run on all target machines:
+```
+hivemind.check_for_hellevator_on_all_target_machines()
 ```
 
 ## Hellevator

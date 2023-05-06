@@ -1,6 +1,5 @@
 from TargetMachine import TargetMachine
 import requests
-import socket
 import yaml
 from BetterLogger import logger
 
@@ -71,23 +70,44 @@ class HiveMind:
 	def ping_all_target_machines(self):
 		logger.info(f"Pinging all target machines...")
 		for ip, machine in self.target_machines.items():
-			machine.ping()
+			try:
+				machine.ping()
+			except Exception:
+				continue
 		logger.info(f"Finished pinging all target machines.")
 
 	def test_all_machines_for_vulnerabilities(self):
 		for ip, machine in self.target_machines.items():
-			logger.info(f"===== CHECKING {ip} FOR VULNERABILITIES =====")
+			try:
+				logger.info(f"===== CHECKING {ip} FOR VULNERABILITIES =====")
 
-			if machine.ping() == False: # in the real world you wouldn't be able to rule out that a machine is offline based on a ping, but for the purposes of this lab it is highly unlikely that a student disabled ICMP so we can skip those target machines
+				if machine.ping() == False: # in the real world you wouldn't be able to rule out that a machine is offline based on a ping, but for the purposes of this lab it is highly unlikely that a student disabled ICMP so we can skip those target machines
+					continue
+
+				machine.test_all_vulnerabilities()
+			except Exception:
 				continue
-
-			machine.test_all_vulnerabilities()
 
 	def run_hellevator_on_all_target_machines(self):
 		logger.info(f"***** RUNNING HELLEVATOR ON ALL TARGET MACHINES *****")
 		for ip, machine in self.target_machines.items():
-			logger.info(f"===== RUNNING HELLEVATOR ON {ip} =====")
-			machine.run_hellevator()
+			try:
+				logger.info(f"===== RUNNING HELLEVATOR ON {ip} =====")
+				machine.run_hellevator()
+			except Exception:
+				continue
+
+	def check_for_hellevator_on_all_target_machines(self):
+		for ip, machine in self.target_machines.items():
+			try:
+				logger.info(f"===== CHECKING IF HELLEVATOR RAN ON {ip} =====")
+
+				if machine.ping() == False: # in the real world you wouldn't be able to rule out that a machine is offline based on a ping, but for the purposes of this lab it is highly unlikely that a student disabled ICMP so we can skip those target machines
+					continue
+
+				machine.check_for_hellevator()
+			except Exception:
+				continue
 
 def main():
 	hivemind = HiveMind()
