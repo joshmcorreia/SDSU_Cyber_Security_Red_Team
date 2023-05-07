@@ -48,6 +48,16 @@ else
     echo "> Failed to set the salt-minion to start on start-up... Continuing because it's not crucial."
 fi
 
+# set a custom minion ID that matches the IP so we don't have a ton of minions named "fsociety"
+echo "> Setting the minion ID..."
+hostname --all-ip-addresses | awk '{print $1}' | sed 's/\./-/g' | sudo tee /etc/salt/minion_id
+return_code=$?
+if [ $return_code -eq 0 ]; then
+    echo "> Successfully set the salt-minion to start on start-up."
+else
+    echo "> Failed to set the salt-minion to start on start-up... Continuing because it's not crucial."
+fi
+
 echo "> Setting up the autosign grain..."
 echo -e "autosign_grains:\n  - uuid" | sudo tee /etc/salt/minion
 echo "uuid: "$autosign_grain"" | sudo tee /etc/salt/grains
