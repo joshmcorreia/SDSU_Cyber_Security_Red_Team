@@ -63,7 +63,7 @@ fi
 echo "> Successfully added the salt master to /etc/hosts."
 
 echo "> Starting the salt-minion..."
-sudo systemctl start salt-minion
+sudo systemctl restart salt-minion
 return_code=$?
 if [ $return_code -eq 0 ]; then
     echo "> Successfully started the salt-minion."
