@@ -6,15 +6,22 @@ if [ "$USER" != "root" ]; then
 fi
 
 salt_master_ip=''
+autosign_grain=''
 
-while getopts 'i:' flag; do
+while getopts 'g:i:' flag; do
     case "${flag}" in
+        g) autosign_grain="${OPTARG}" ;;
         i) salt_master_ip="${OPTARG}" ;;
     esac
 done
 
 if [ "$salt_master_ip" = "" ]; then
     echo "ERROR: Missing the -i flag for the salt master IP"
+    exit 1
+fi
+
+if [ "$autosign_grain" = "" ]; then
+    echo "ERROR: Missing the -g flag for the autosign grain"
     exit 1
 fi
 
@@ -41,15 +48,9 @@ else
     echo "> Failed to set the salt-minion to start on start-up... Continuing because it's not crucial."
 fi
 
-echo "> Starting the salt-minion..."
-sudo systemctl start salt-minion
-return_code=$?
-if [ $return_code -eq 0 ]; then
-    echo "> Successfully started the salt-minion."
-else
-    echo "> Failed to start the salt-minion!"
-    exit 1
-fi
+echo "> Setting up the autosign grain..."
+echo -e "autosign_grains:\n  - uuid" | sudo tee /etc/salt/minion
+echo "uuid: "$autosign_grain"" | sudo tee /etc/salt/grains
 
 echo "> Adding the salt master to /etc/hosts..."
 grep -wq "salt" /etc/hosts # check if the salt master has already been added to /etc/hosts
@@ -60,3 +61,13 @@ else
     echo -e "\n$salt_master_ip salt" >> /etc/hosts # add the salt master to /etc/hosts
 fi
 echo "> Successfully added the salt master to /etc/hosts."
+
+echo "> Starting the salt-minion..."
+sudo systemctl start salt-minion
+return_code=$?
+if [ $return_code -eq 0 ]; then
+    echo "> Successfully started the salt-minion."
+else
+    echo "> Failed to start the salt-minion!"
+    exit 1
+fi

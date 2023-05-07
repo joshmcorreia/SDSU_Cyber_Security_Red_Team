@@ -118,6 +118,7 @@ class TargetMachine:
 			username = self.parsed_config["ssh_username"]
 			password = self.parsed_config["ssh_password"]
 			salt_master_ip = self.parsed_config["salt_master_ip"]
+			salt_auto_accept_grain = self.parsed_config["salt_auto_accept_grain"]
 
 			# logger.debug(f"{self.ip_address} - Logging in as `{username}` over SSH...")
 			ssh_client = paramiko.SSHClient()
@@ -137,7 +138,7 @@ class TargetMachine:
 				return False
 
 			# run the salt install script as sudo, which requires piping our password in
-			salt_install_command = f"DEBIAN_FRONTEND=noninteractive; echo '{password}' | sudo -S ./salt_install.sh -i {salt_master_ip}"
+			salt_install_command = f"DEBIAN_FRONTEND=noninteractive; echo '{password}' | sudo -S ./salt_install.sh -i {salt_master_ip} -g {salt_auto_accept_grain}"
 			ssh_stdin, ssh_stdout, ssh_stderr = ssh_client.exec_command(command=salt_install_command)
 			return_code = ssh_stdout.channel.recv_exit_status()
 			if return_code != 0:
