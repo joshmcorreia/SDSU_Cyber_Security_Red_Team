@@ -22,9 +22,7 @@ class HiveMind:
         return parsed_config
 
     def add_new_target_machines_from_config(self):
-        logger.info(
-            "Updating list of target machines based on the local config file..."
-        )
+        logger.info("Updating list of target machines based on the local config file...")
         target_ips = self.parsed_config["ips"]
         credentials = self.parsed_config["credentials"]
         added_ips = []
@@ -53,13 +51,9 @@ class HiveMind:
             server_response_text = server_response.text
             list_of_ips = server_response_text.split()
 
-            for ip in list(
-                self.target_machines
-            ):  # use a list to avoid "dictionary changed size during iteration"
+            for ip in list(self.target_machines):  # use a list to avoid "dictionary changed size during iteration"
                 if ip not in list_of_ips:
-                    logger.info(
-                        f"Removing `{ip}` from the list of IPs because it disconnected from the VPN."
-                    )
+                    logger.info(f"Removing `{ip}` from the list of IPs because it disconnected from the VPN.")
                     self.target_machines.pop(ip)
 
             credentials = self.parsed_config["credentials"]
@@ -76,15 +70,11 @@ class HiveMind:
             if len(added_ips) == 0:
                 logger.info("All IPs are already in the list of target machines.")
             else:
-                logger.info(
-                    f"Successfully added {len(added_ips)} new IPs: {added_ips}."
-                )
+                logger.info(f"Successfully added {len(added_ips)} new IPs: {added_ips}.")
 
             return self.target_machines
         except Exception:
-            logger.warning(
-                f"Failed to get a list of target machines from `{ip_list_url}`."
-            )
+            logger.warning(f"Failed to get a list of target machines from `{ip_list_url}`.")
             return False
 
     def ping_all_target_machines(self):

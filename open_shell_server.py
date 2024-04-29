@@ -42,9 +42,7 @@ class NServer(socketserver.ThreadingTCPServer):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Process some integers.")
-    parser.add_argument(
-        "-p", "--port", help="The port to open the server on.", required=True
-    )
+    parser.add_argument("-p", "--port", help="The port to open the server on.", required=True)
     parser.add_argument(
         "-a",
         "--any_user",

