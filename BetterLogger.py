@@ -18,9 +18,9 @@ file_handler.setFormatter(formatter)
 logger.addHandler(stdout_handler)
 logger.addHandler(file_handler)
 
-COLOR_RED = '\x1B[31m'
-COLOR_GREEN = '\x1B[32m'
-COLOR_YELLOW = '\x1B[33m'
-COLOR_BLUE = '\x1B[34m'
-COLOR_PINK = '\x1B[38;5;201m'
-COLOR_END = '\x1B[0m'
+COLOR_RED = "\x1b[31m"
+COLOR_GREEN = "\x1b[32m"
+COLOR_YELLOW = "\x1b[33m"
+COLOR_BLUE = "\x1b[34m"
+COLOR_PINK = "\x1b[38;5;201m"
+COLOR_END = "\x1b[0m"
