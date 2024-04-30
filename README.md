@@ -26,13 +26,8 @@ python3
 ```
 from HiveMind import HiveMind
 hivemind = HiveMind()
-hivemind.add_new_target_machines_from_config()
-hivemind.add_new_target_machines_from_ip_list()
-```
-
-### Update the list of target machines:
-```
-hivemind.add_new_target_machines_from_ip_list()
+hivemind.add_ips_from_roster_to_database()
+hivemind.convert_database_ips_to_target_machines()
 ```
 
 ### Ping all target machines:
@@ -69,7 +64,7 @@ The name is a reference to a Hell Elevator in Terraria.
 ---
 
 ## System Vulnerabilities
-This section highlights the vulnerabilities that I have found on the defense lab system. These CVEs may or may not be patched by updating the system, I will have to try 
+This section highlights the vulnerabilities that I have found on the defense lab system. These CVEs may or may not be patched by updating the system, I will have to test them out in the future.
 
 ### CVE-2021-3156 (Baron Samedit)
 **Type:** local

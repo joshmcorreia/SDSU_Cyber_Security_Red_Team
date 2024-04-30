@@ -4,8 +4,7 @@ ssh_public_key: ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHEVlp/30J0wOuK53YrqMTQ7Sduq
 ip_list_url: "http://192.168.65.1:8000/clients.txt"
 salt_master_ip: 192.168.232.132
 salt_auto_accept_grain: a1724dcb-a16b-46ba-baa0-24130e5c5ed1 # generate this online, https://www.uuidgenerator.net/
-ips:
-  - 192.168.199.129
+sqlite_filename: "database.db"
 credentials:
   - username: elliot
     password: fsociety

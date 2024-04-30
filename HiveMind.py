@@ -1,7 +1,12 @@
+from SQLiteDatabase import SQLiteDatabase
 from TargetMachine import TargetMachine
-import requests
+import os
 import yaml
 from BetterLogger import logger
+
+
+class SQLiteDatabaseAlreadyExistsException(Exception):
+    pass
 
 
 class HiveMind:
@@ -11,7 +16,9 @@ class HiveMind:
 
     def __init__(self) -> None:
         self.parsed_config = self.read_config_file()
-        self.target_machines = {}
+        self.target_machines: dict[str, TargetMachine] = {}
+        self.sqlite_filename: str = self.parsed_config["sqlite_filename"]
+        self.initialize_sqlite_database()
 
     def read_config_file(self):
         config_file_location = "config.yaml"
@@ -21,61 +28,63 @@ class HiveMind:
         logger.debug(f"Successfully read config file `{config_file_location}`.")
         return parsed_config
 
-    def add_new_target_machines_from_config(self):
-        logger.info("Updating list of target machines based on the local config file...")
-        target_ips = self.parsed_config["ips"]
+    def initialize_sqlite_database(self):
+        """
+        Initializes the local SQLite database used to store IPs and other info
+        """
+        logger.info(f"Initializing the SQLite database `{self.sqlite_filename}`...")
+
+        if os.path.exists(self.sqlite_filename):
+            logger.info(f"The SQLite database `{self.sqlite_filename}` already exists.")
+            return
+
+        with SQLiteDatabase(database_file_name=self.sqlite_filename) as database:
+            create_IP_table_statement = "CREATE TABLE IP(address TEXT PRIMARY KEY, name TEXT);"
+            database.cursor.execute(create_IP_table_statement)
+            database.connection.commit()
+        logger.info(f"Successfully initialized the SQLite database `{self.sqlite_filename}`.")
+
+    def get_ips_from_database(self):
+        with SQLiteDatabase(database_file_name=self.sqlite_filename) as database:
+            select_statement = "SELECT address FROM IP"
+            sql_arguments = ()
+            database.cursor.execute(select_statement, sql_arguments)
+            result = database.cursor.fetchall()
+            result = [x[0] for x in result]
+            return result
+
+    def add_ip_to_database(self, address: str, name: str) -> int:
+        with SQLiteDatabase(database_file_name=self.sqlite_filename) as database:
+            insert_statement = "INSERT OR IGNORE INTO IP(address, name) VALUES (?, ?)"
+            sql_arguments = (
+                address,
+                name,
+            )  # a tuple is expected so we need the trailing comma
+            database.cursor.execute(insert_statement, sql_arguments)
+            database.connection.commit()
+            return database.cursor.lastrowid
+
+    def add_ips_from_roster_to_database(self):
+        with open("roster.txt", "r") as file_in:
+            for line in file_in:
+                line = line.strip()
+                if line == "":
+                    continue
+                ip = line.split(",")[0]
+                name = line.split(",")[1]
+                self.add_ip_to_database(address=ip, name=name)
+
+    def convert_database_ips_to_target_machines(self):
+        ips_from_database = self.get_ips_from_database()
         credentials = self.parsed_config["credentials"]
-        added_ips = []
-        for ip in target_ips:
-            if ip not in self.target_machines:
-                added_ips.append(ip)
-                new_user = TargetMachine(
-                    ip_address=ip,
-                    credentials=credentials,
-                    parsed_config=self.parsed_config,
-                )
-                self.target_machines[ip] = new_user
-        if len(added_ips) == 0:
-            logger.info("All IPs are already in the list of target machines.")
-        else:
-            logger.info(f"Successfully added the following IPs: {added_ips}.")
-
-    def add_new_target_machines_from_ip_list(self):
-        """
-        Reads a list of IPs from a URL and updates the target machines based on that list
-        """
-        try:
-            ip_list_url = self.parsed_config["ip_list_url"]
-            logger.info(f"Getting the list of target machines from `{ip_list_url}`...")
-            server_response = requests.get(ip_list_url, timeout=3)
-            server_response_text = server_response.text
-            list_of_ips = server_response_text.split()
-
-            for ip in list(self.target_machines):  # use a list to avoid "dictionary changed size during iteration"
-                if ip not in list_of_ips:
-                    logger.info(f"Removing `{ip}` from the list of IPs because it disconnected from the VPN.")
-                    self.target_machines.pop(ip)
-
-            credentials = self.parsed_config["credentials"]
-            added_ips = []
-            for ip in list_of_ips:
-                if ip not in self.target_machines:
-                    new_user = TargetMachine(
-                        ip_address=ip,
-                        credentials=credentials,
-                        parsed_config=self.parsed_config,
-                    )
-                    self.target_machines[ip] = new_user
-                    added_ips.append(ip)
-            if len(added_ips) == 0:
-                logger.info("All IPs are already in the list of target machines.")
-            else:
-                logger.info(f"Successfully added {len(added_ips)} new IPs: {added_ips}.")
-
-            return self.target_machines
-        except Exception:
-            logger.warning(f"Failed to get a list of target machines from `{ip_list_url}`.")
-            return False
+        self.target_machines = {}  # reset the target machines because we're going to recreate it based on the database ips
+        for ip in ips_from_database:
+            new_user = TargetMachine(
+                ip_address=ip,
+                credentials=credentials,
+                parsed_config=self.parsed_config,
+            )
+            self.target_machines[ip] = new_user
 
     def ping_all_target_machines(self):
         logger.info("Pinging all target machines...")
@@ -134,13 +143,3 @@ class HiveMind:
                 machine.install_salt_minion()
             except Exception:
                 continue
-
-
-def main():
-    hivemind = HiveMind()
-    hivemind.add_new_target_machines_from_config()
-    print(hivemind.target_machines)
-
-
-if __name__ == "__main__":
-    main()
