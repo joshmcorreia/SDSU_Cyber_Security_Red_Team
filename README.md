@@ -18,8 +18,8 @@ I originally took this course in 2019 and was assigned to Red Team because of so
 
 ### Starting a Python shell:
 ```
-cd ~/SDSU_Cyber_Security_Red_Team
-python3
+$ cd ~/SDSU_Cyber_Security_Red_Team
+$ uv run python3
 ```
 
 ### Instantiating Hivemind (in the Python shell):
