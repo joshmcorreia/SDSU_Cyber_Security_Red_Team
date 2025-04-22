@@ -7,6 +7,14 @@ I originally took this course in 2019 and was assigned to Red Team because of so
 
 ---
 
+## Prerequisites:
+Before running these scripts, install [uv](https://github.com/astral-sh/uv):
+```
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
+---
+
 ## Using HiveMind:
 
 ### Colored log explanation:
